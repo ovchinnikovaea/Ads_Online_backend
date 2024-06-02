@@ -10,11 +10,10 @@ import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 
-@CrossOrigin(value = "http://localhost:3000")
 @RestController
+@RequestMapping("/ads")
 public class AdsController {
 
     /*
@@ -30,7 +29,7 @@ public class AdsController {
      * @param authentication
      * @return
      */
-    @PostMapping(value = "/ads")
+    @PostMapping
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
                                        @Valid @RequestPart(value = "image", required = false) MultipartFile image,
                                        Authentication authentication) {
@@ -42,7 +41,7 @@ public class AdsController {
      * @param id
      * @return
      */
-    @GetMapping(value = "/ads/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<ExtendedAdDto> getAds(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(adService.getExtendedAdDto(id));
     }
@@ -52,7 +51,7 @@ public class AdsController {
      * @param authentication
      * @return
      */
-    @GetMapping(value = "/ads/me")
+    @GetMapping(value = "/me")
     public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
         return ResponseEntity.ok(adService.getAdsDtoMe(authentication.getName()));
     }
@@ -61,11 +60,42 @@ public class AdsController {
      * Метод для получения всех объявлений
      * @return
      */
-    @GetMapping(value = "/ads")
+    @GetMapping
     public ResponseEntity<AdsDto> getAds() {
         return ResponseEntity.ok(adService.getAllAds());
     }
 
+    /**
+     * Метод для удаления объявления по id
+     * @param id
+     * @return
+     */
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> removedAd(@PathVariable("id") Integer id) {
+        return adService.deleteAd(id);
+    }
 
+    /**
+     * Метод для обновления информации об объявлении
+     * @param id
+     * @param body
+     * @return
+     */
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id,
+                                           @Valid @RequestBody CreateOrUpdateAdDto body) {
+        return ResponseEntity.ok(adService.updateAd(id, body));
+    }
 
+    /**
+     * Метод для обновления картинки для объявления
+     * @param id
+     * @param image
+     * @return
+     */
+    @PatchMapping(value = "/{id}/image")
+    public ResponseEntity<byte[]> updateImage(@PathVariable("id") Integer id,
+                                              @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
+        return ResponseEntity.ok(adService.updateImage(id, image));
+    }
 }
