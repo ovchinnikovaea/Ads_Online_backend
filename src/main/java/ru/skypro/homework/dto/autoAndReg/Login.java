@@ -1,11 +1,17 @@
-package ru.skypro.homework.dto;
+package ru.skypro.homework.dto.autoAndReg;
 
+/* Здесь должна быть хорошая авторизация. И будет. Наверно.*/
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class Login {
 
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("password")
     private String password;
 
     public String getUsername() {
@@ -23,4 +29,6 @@ public class Login {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

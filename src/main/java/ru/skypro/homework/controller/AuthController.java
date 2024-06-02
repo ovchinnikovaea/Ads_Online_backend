@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.autoAndReg.Login;/*изначально эта зависимость была на файл в папке dto*/
+import ru.skypro.homework.dto.autoAndReg.Register;/*изначально эта зависимость была на файл в папке dto*/
 import ru.skypro.homework.service.AuthService;
 
 @Slf4j
