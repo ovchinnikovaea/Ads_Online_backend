@@ -7,7 +7,7 @@ import lombok.Data;
 import ru.skypro.homework.dto.Role;
 
 @Data
-public class RegisterDTO {
+public class Register {
 
     @JsonProperty("username")
     private String username;
@@ -26,4 +26,16 @@ public class RegisterDTO {
 
     @JsonProperty("role")
     private Role role;
+
+    public String getUsername() {
+        return "";
+    }
+
+    public String getPassword() {
+        return "";
+    }
+
+    public <E extends Enum<E>> Enum<E> getRole() {
+        return null;
+    }
 }
