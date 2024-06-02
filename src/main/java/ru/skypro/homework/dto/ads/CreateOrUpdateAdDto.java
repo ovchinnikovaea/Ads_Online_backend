@@ -7,7 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Data
-public class CreateOrUpdateDto {
+public class CreateOrUpdateAdDto {
     @JsonProperty("description") // описание объявления
     private String description;
 
