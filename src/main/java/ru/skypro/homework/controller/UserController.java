@@ -4,19 +4,21 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.User.NewPasswordDTO;
 import ru.skypro.homework.dto.User.UpdateUserDTO;
 import ru.skypro.homework.dto.User.UserDTO;
+import ru.skypro.homework.mapper.UserMapper;
+import ru.skypro.homework.model.User;
+import ru.skypro.homework.repository.UserRepository;
 
 import java.awt.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private UserService userService;
-    private RoleService roleService;
-    private Mapper mapper;
+    private UserRepository repository;
 
-    public UserController(UserService userService, RoleService roleService, Mapper mapper) {
-        this.userService = userService;
-        this.roleService = roleService;
+    private UserMapper mapper;
+
+    public UserController(UserRepository repository, UserMapper mapper) {
+        this.repository = repository;
         this.mapper = mapper;
     }
     @PostMapping
@@ -24,7 +26,9 @@ public class UserController {
 
     }
     @GetMapping
-    public UserDTO me(){}
+    public UserDTO me(){
+
+    }
     @PatchMapping
     private UpdateUserDTO me(){}
     @PatchMapping("/me")
