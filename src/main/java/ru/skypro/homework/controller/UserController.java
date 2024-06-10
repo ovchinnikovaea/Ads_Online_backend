@@ -22,9 +22,7 @@ public class UserController {
         this.mapper = mapper;
     }
     @PostMapping
-    public NewPasswordDTO  set_password(){
-
-    }
+    public NewPasswordDTO  set_password(){}
     @GetMapping
     public UserDTO me(){
 

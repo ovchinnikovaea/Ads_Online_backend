@@ -1,8 +1,6 @@
 package ru.skypro.homework.dto.ads;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-
 import javax.annotation.Resource;
 
 @Data
