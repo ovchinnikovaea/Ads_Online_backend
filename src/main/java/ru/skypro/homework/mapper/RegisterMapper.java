@@ -3,7 +3,7 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.skypro.homework.dto.autoAndReg.Register;
-import ru.skypro.homework.model.User;
+import ru.skypro.homework.entity.User;
 
 @Mapper(componentModel = "spring")
 public abstract class RegisterMapper {

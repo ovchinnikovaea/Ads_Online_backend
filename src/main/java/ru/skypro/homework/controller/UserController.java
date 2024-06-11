@@ -5,7 +5,6 @@ import ru.skypro.homework.dto.User.NewPasswordDTO;
 import ru.skypro.homework.dto.User.UpdateUserDTO;
 import ru.skypro.homework.dto.User.UserDTO;
 import ru.skypro.homework.mapper.UserMapper;
-import ru.skypro.homework.model.User;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.awt.*;
