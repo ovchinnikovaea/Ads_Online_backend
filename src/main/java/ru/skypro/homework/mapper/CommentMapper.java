@@ -6,7 +6,7 @@ import org.mapstruct.factory.Mappers;
 import ru.skypro.homework.dto.comments.CommentDTO;
 import ru.skypro.homework.dto.comments.CommentsDTO;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDTO;
-import ru.skypro.homework.model.Comment;
+import ru.skypro.homework.entity.Comment;
 
 import java.util.List;
 

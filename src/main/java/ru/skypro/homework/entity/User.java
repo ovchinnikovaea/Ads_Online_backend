@@ -1,10 +1,8 @@
-package ru.skypro.homework.model;
+package ru.skypro.homework.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Objects;
 @Entity
 public class User {
