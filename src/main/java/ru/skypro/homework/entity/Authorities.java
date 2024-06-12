@@ -18,7 +18,7 @@ import javax.persistence.Id;
 @RequiredArgsConstructor
 @Entity
 
-public class LoginEntity {
+public class Authorities{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
