@@ -9,4 +9,7 @@ import java.util.Optional;
 @Repository
 public interface LoginRepository extends JpaRepository<Authorities, Integer> {
     Optional<Authorities> findByUsername(String username);
+    Optional<Authorities> save();
+
+
 }

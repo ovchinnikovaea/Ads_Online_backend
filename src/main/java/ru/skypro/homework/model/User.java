@@ -118,4 +118,8 @@ public class User {
                 ", image='" + image + '\'' +
                 '}';
     }
+
+    public String getUsername() {
+        return firstName + lastName;
+    }
 }
