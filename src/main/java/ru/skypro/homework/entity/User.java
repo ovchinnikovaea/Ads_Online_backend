@@ -1,25 +1,35 @@
 package ru.skypro.homework.entity;
 
+import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import java.util.Objects;
+@Slf4j
 @Entity
+@Table(name="users")
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
+@ToString(includeFieldNames=true)
 public class User {
     @Id
-    Integer id;
-    String email;
-    String firstName;
-    String lastName;
-    String phone;
+    private Integer id;
+    private String email;
+    private String firstName;
+    private String lastName;
+    private String phone;
     @ManyToOne
-    Role role;
-    String image;
+    private Role role;
+    private boolean enabled;
+    @OneToOne
+    private Image image;
 
-    public User() {
-    }
 
-    public User(Integer id, String email, String firstName, String lastName, String phone, Role role, String image) {
+
+    public User(@NonNull Integer id,@NonNull String email,@NonNull String firstName,
+                @NonNull String lastName,@NonNull String phone,@NonNull Role role,@NonNull Image image) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
@@ -29,91 +39,11 @@ public class User {
         this.image = image;
     }
 
-    public User(String firstName, String lastName, String phone) {
+    public User(@NonNull String firstName,@NonNull String lastName,@NonNull String phone) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
     }
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(phone, user.phone);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(firstName, lastName, phone);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", phone='" + phone + '\'' +
-                ", role=" + role +
-                ", image='" + image + '\'' +
-                '}';
-    }
 }
