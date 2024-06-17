@@ -15,8 +15,9 @@ import java.util.List;
 
 @Component
 @Mapper(componentModel = "spring")
-public abstract class AdMapper {
-
+public abstract  class AdMapper {
+    @Autowired
+    ImageServiceImpl imageService;
     public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
 
     @Mapping(target = "author", expression = "java(ad.getAuthor().getId())")

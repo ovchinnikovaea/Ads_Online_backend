@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import ru.skypro.homework.dto.ads.AdDto;
 import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
+import ru.skypro.homework.service.AdService;
 
 import javax.validation.Valid;
 
@@ -21,6 +23,12 @@ public class AdsController {
     В настоящий момент в контроллере используются предположительные названия методов будущего сервиса
      */
     private final AdService adService;
+
+    @Autowired
+    public AdsController(AdService adService, CommentService commentService) {
+        this.adService = adService;
+        this.commentService = commentService;
+    }
 
     /**
      * Метод для создания объявления
@@ -71,8 +79,9 @@ public class AdsController {
      * @return
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> removedAd(@PathVariable("id") Integer id) {
-        return adService.deleteAd(id);
+    public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) {
+        adService.deleteAd(id);
+        return ResponseEntity.ok().build();
     }
 
     /**
