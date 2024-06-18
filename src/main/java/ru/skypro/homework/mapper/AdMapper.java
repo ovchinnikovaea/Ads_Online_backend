@@ -20,13 +20,13 @@ public abstract class AdMapper {
     public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
 
     @Mapping(target = "author", expression = "java(ad.getAuthor().getId())")
-    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
+    @Mapping(target = "image", ignore = true)
     @Mapping(target = "pk", source = "id")
     public abstract AdDto adToAdDto(Ad ad);
 
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
-    @Mapping(target = "email", expression = "java(ad.getAuthor().getUsername())")
+    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "email", ignore = true)
     @Mapping(target = "authorFirstName", expression = "java(ad.getAuthor().getFirstName())")
     @Mapping(target = "authorLastName", expression = "java(ad.getAuthor().getLastName())")
     @Mapping(target = "phone", expression = "java(ad.getAuthor().getPhone())")

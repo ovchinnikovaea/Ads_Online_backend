@@ -5,6 +5,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.autoAndReg.Register;
 import ru.skypro.homework.service.AuthService;
 
@@ -42,6 +43,11 @@ public class AuthServiceImpl implements AuthService {
                         .roles(register.getRole().name())
                         .build());
         return true;
+    }
+
+    @Override
+    public void addAuthorities(ru.skypro.homework.entity.User user, Role role) {
+
     }
 
 }

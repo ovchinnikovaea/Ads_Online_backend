@@ -14,6 +14,7 @@ import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.LoginRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.impl.AuthServiceImpl;
+import ru.skypro.homework.service.impl.ImageService;
 
 import java.util.List;
 
@@ -29,8 +30,10 @@ public abstract class UserMapper {
     UserRepository userRepository;
     @Autowired
     LoginRepository loginRepository;
-    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
-    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))")
+//    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
+//    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))")
+    @Mapping(target = "image", ignore = true)
+    @Mapping(target = "role", ignore = true)
     public abstract UserDTO userToUserDto(User user);
 
     public abstract User updateUserDtoToUser(UpdateUserDTO updateUserDto);

@@ -1,19 +1,22 @@
 package ru.skypro.homework.controller;
 
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.ads.AdDto;
 import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
+import ru.skypro.homework.service.AdService;
 
 import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/ads")
+@RequiredArgsConstructor
 public class AdsController {
 
     /*
@@ -53,12 +56,12 @@ public class AdsController {
      */
     @GetMapping(value = "/me")
     public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
-        return ResponseEntity.ok(adService.getAdsDtoMe(authentication.getName()));
+        return ResponseEntity.ok(adService.getAdsDtoMe(authentication));
     }
 
     /**
      * Метод для получения всех объявлений
-     * @return
+     * @return список всех объявлений
      */
     @GetMapping
     public ResponseEntity<AdsDto> getAds() {
@@ -67,8 +70,8 @@ public class AdsController {
 
     /**
      * Метод для удаления объявления по id
-     * @param id
-     * @return
+     * @param id идентификатор объявления
+     * @return пустой ответ
      */
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> removedAd(@PathVariable("id") Integer id) {
@@ -77,9 +80,9 @@ public class AdsController {
 
     /**
      * Метод для обновления информации об объявлении
-     * @param id
-     * @param body
-     * @return
+     * @param id идентификатор объявления
+     * @param body новое содержание объявления
+     * @return обновление объявление
      */
     @PatchMapping(value = "/{id}")
     public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id,
@@ -89,8 +92,8 @@ public class AdsController {
 
     /**
      * Метод для обновления картинки для объявления
-     * @param id
-     * @param image
+     * @param id идентификатор объявления
+     * @param image изображение товара или услуги
      * @return
      */
     @PatchMapping(value = "/{id}/image")

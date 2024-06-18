@@ -21,13 +21,19 @@ public class UserController {
         this.mapper = mapper;
     }
     @PostMapping
-    public NewPasswordDTO  set_password(){}
+    public NewPasswordDTO  set_password(){
+        throw new RuntimeException();
+    }
     @GetMapping
     public UserDTO me(){
-
+        throw new RuntimeException();
     }
     @PatchMapping
-    private UpdateUserDTO me(){}
+    private UpdateUserDTO updateMe(){
+        throw new RuntimeException();
+    }
     @PatchMapping("/me")
-    private Image image(){}
+    private Image image(){
+        throw new RuntimeException();
+    }
 }

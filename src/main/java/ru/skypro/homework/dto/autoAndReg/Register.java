@@ -35,7 +35,7 @@ public class Register {
         return "";
     }
 
-    public <E extends Enum<E>> Enum<E> getRole() {
-        return null;
-    }
+//    public <E extends Enum<E>> Enum<E> getRole() {
+//        return null;
+//    }
 }

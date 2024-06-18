@@ -1,6 +1,5 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +11,7 @@ import ru.skypro.homework.dto.User.UpdateUserDTO;
 import ru.skypro.homework.dto.User.UserDTO;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
@@ -27,10 +27,11 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     private final PasswordEncoder encoder;
 
     public UserServiceImpl(AuthServiceImpl authoritiesService, UserRepository userRepository,
-                           UserMapper userMapper, PasswordEncoder encoder) {
+                           UserMapper userMapper, ImageService imageService, PasswordEncoder encoder) {
         this.authoritiesService = authoritiesService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.imageService = imageService;
         this.encoder = encoder;
     }
 
@@ -40,7 +41,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     }
 
     @Override
-    public User getUser(String username) throws UserNotFoundException {
+    public User getUser(String username) {
         return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
     }
 

@@ -46,4 +46,11 @@ public class User {
     }
 
 
+    public void setPassword(String encode) {
+
+    }
+
+    public String getPassword() {
+        return null;
+    }
 }
