@@ -6,26 +6,21 @@ import lombok.Data;
 import javax.validation.Valid;
 import java.util.List;
 @Data
-public class CommentsDTO {
+public class CommentsDto {
+    // Dto для списка комментариев
+    // где results - коллекция комментариев в формате AdDto
+
     @JsonProperty("count")
     private Integer count;
     @JsonProperty("results")
     @Valid
-    private List<CommentDTO> results;
-
-    public Integer getCount() {
-        return count;
-    }
+    private List<CommentDto> results;
 
     public void setCount(Integer count) {
         this.count = count;
     }
 
-    public List<CommentDTO> getResults() {
-        return results;
-    }
-
-    public void setResults(List<CommentDTO> results) {
+    public void setResults(List<CommentDto> results) {
         this.results = results;
     }
 }

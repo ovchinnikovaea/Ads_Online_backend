@@ -1,12 +1,11 @@
-package ru.skypro.homework.dto.User;
+package ru.skypro.homework.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.Role;
 
-import java.time.format.SignStyle;
 @Data
-public class UserDTO {
+public class UserDto {
     @JsonProperty("id")
     private Integer id;
     @JsonProperty("email")

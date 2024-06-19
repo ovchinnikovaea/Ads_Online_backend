@@ -3,14 +3,15 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
-import ru.skypro.homework.dto.comments.CommentDTO;
-import ru.skypro.homework.dto.comments.CommentsDTO;
-import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDTO;
+import org.springframework.stereotype.Component;
+import ru.skypro.homework.dto.comments.CommentDto;
+import ru.skypro.homework.dto.comments.CommentsDto;
+import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Comment;
-import ru.skypro.homework.entity.Image;
 
 import java.util.List;
 
+@Component
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
@@ -19,32 +20,32 @@ public interface CommentMapper {
     @Mapping(source = "author.id", target = "author")
     @Mapping(source = "author.image.filePath", target = "authorImage")
     @Mapping(source = "author.firstName", target = "authorFirstName")
-    CommentDTO commentToCommentDTO(Comment comment);
+    CommentDto commentToCommentDTO(Comment comment);
 
     @Mapping(source = "author", target = "author.id")
     @Mapping(source = "pk", target = "id")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "ad", ignore = true)
-    Comment commentDTOToComment(CommentDTO commentDTO);
+    Comment commentDTOToComment(CommentDto commentDTO);
 
-    List<CommentDTO> commentsToCommentDTOs(List<Comment> comments);
+    List<CommentDto> commentsToCommentDTOs(List<Comment> comments);
 
-    List<Comment> commentDTOsToComments(List<CommentDTO> commentDTOs);
+    List<Comment> commentDTOsToComments(List<CommentDto> commentDtos);
 
     @Mapping(target = "results", source = "comments")
     @Mapping(expression = "java(comments.size())", target = "count")
-    default CommentsDTO commentsToCommentsDTO(List<Comment> comments) {
-        CommentsDTO commentsDTO = new CommentsDTO();
+    default CommentsDto commentsToCommentsDTO(List<Comment> comments) {
+        CommentsDto commentsDTO = new CommentsDto();
         commentsDTO.setResults(commentsToCommentDTOs(comments));
         commentsDTO.setCount(comments.size());
         return commentsDTO;
     }
 
-    CreateOrUpdateCommentDTO commentToCreateOrUpdateCommentDTO(Comment comment);
+    CreateOrUpdateCommentDto commentToCreateOrUpdateCommentDTO(Comment comment);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java((int) (System.currentTimeMillis() / 1000))")
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "ad", ignore = true)
-    Comment createOrUpdateCommentDTOToComment(CreateOrUpdateCommentDTO createOrUpdateCommentDTO);
+    Comment createOrUpdateCommentDTOToComment(CreateOrUpdateCommentDto createOrUpdateCommentDTO);
 }

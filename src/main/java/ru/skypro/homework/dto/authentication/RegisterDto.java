@@ -1,13 +1,14 @@
 /* DTO Register - для регистрации. Напиши сюда если что то поменяется*/
 
-package ru.skypro.homework.dto.autoAndReg;
+package ru.skypro.homework.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.Role;
 
 @Data
-public class Register {
+public class RegisterDto {
+    // Dto для регистрации пользователя
 
     @JsonProperty("username")
     private String username;
@@ -35,7 +36,7 @@ public class Register {
         return "";
     }
 
-    public <E extends Enum<E>> Enum<E> getRole() {
-        return null;
-    }
+//    public <E extends Enum<E>> Enum<E> getRole() {
+//        return null;
+//    }
 }
