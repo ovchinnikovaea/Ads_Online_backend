@@ -3,9 +3,9 @@ package ru.skypro.homework.service.impl;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import ru.skypro.homework.dto.comments.CommentDTO;
-import ru.skypro.homework.dto.comments.CommentsDTO;
-import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDTO;
+import ru.skypro.homework.dto.comments.CommentDto;
+import ru.skypro.homework.dto.comments.CommentsDto;
+import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.entity.User;
@@ -39,15 +39,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentsDTO getAllCommentsByAuthor(Integer id) {
+    public CommentsDto getAllCommentsByAuthor(Integer id) {
         List<Comment> comments = commentRepository.findByAdId(id);
         return commentMapper.commentsToCommentsDTO(comments);
     }
 
     @Override
-    public CommentDTO addCommentToAd(Integer adId, CreateOrUpdateCommentDTO commentDTO) {
+    public CommentDto addCommentToAd(Integer adId, CreateOrUpdateCommentDto commentDTO) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByEmail(currentUsername)
+        User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
         Ad ad = adRepository.findById(adId).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено"));
@@ -64,7 +64,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentDTO updateComment(Integer adId, Integer commentId, CreateOrUpdateCommentDTO commentDTO) {
+    public CommentDto updateComment(Integer adId, Integer commentId, CreateOrUpdateCommentDto commentDTO) {
         Comment updateComment = commentRepository.findByAdIdAndId(adId, commentId);
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
         updateComment.setText(comment.getText());

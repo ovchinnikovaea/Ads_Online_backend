@@ -7,9 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.comments.CommentDTO;
-import ru.skypro.homework.dto.comments.CommentsDTO;
-import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDTO;
+import ru.skypro.homework.dto.comments.CommentDto;
+import ru.skypro.homework.dto.comments.CommentsDto;
+import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.service.CommentService;
 
 @RestController
@@ -25,7 +25,7 @@ public class CommentsController {
             @ApiResponse(responseCode = "200",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CommentsDTO.class))),
+                            schema = @Schema(implementation = CommentsDto.class))),
             @ApiResponse(responseCode = "401",
                     content = @Content),
             @ApiResponse(responseCode = "404",
@@ -34,8 +34,8 @@ public class CommentsController {
     })
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<CommentsDTO> getAllCommentsByAuthor(@PathVariable int id) {
-        CommentsDTO commentsDTO = commentService.getAllCommentsByAuthor(id);
+    public ResponseEntity<CommentsDto> getAllCommentsByAuthor(@PathVariable int id) {
+        CommentsDto commentsDTO = commentService.getAllCommentsByAuthor(id);
         return ResponseEntity.ok(commentsDTO);
     }
 
@@ -43,16 +43,16 @@ public class CommentsController {
             @ApiResponse(responseCode = "200",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CommentDTO.class))),
+                            schema = @Schema(implementation = CommentDto.class))),
             @ApiResponse(responseCode = "401",
                     content = @Content),
             @ApiResponse(responseCode = "404",
                     content = @Content)
     })
     @PostMapping("/{id}/comments")
-    public ResponseEntity<CommentDTO> addComment(@PathVariable Integer id,
-                                                 @RequestBody CreateOrUpdateCommentDTO comment) {
-        CommentDTO commentDTO = commentService.addCommentToAd(id, comment);
+    public ResponseEntity<CommentDto> addComment(@PathVariable Integer id,
+                                                 @RequestBody CreateOrUpdateCommentDto comment) {
+        CommentDto commentDTO = commentService.addCommentToAd(id, comment);
         return ResponseEntity.ok(commentDTO);
     }
 
@@ -77,7 +77,7 @@ public class CommentsController {
             @ApiResponse(responseCode = "200",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CommentDTO.class))),
+                            schema = @Schema(implementation = CommentDto.class))),
             @ApiResponse(responseCode = "401",
                     content = @Content),
             @ApiResponse(responseCode = "403",
@@ -86,10 +86,10 @@ public class CommentsController {
                     content = @Content)
     })
     @PatchMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<CommentDTO> updateComment(@PathVariable Integer adId,
+    public ResponseEntity<CommentDto> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentId,
-                                                    @RequestBody CreateOrUpdateCommentDTO comment) {
-        CommentDTO commentDTO = commentService.updateComment(adId, commentId, comment);
+                                                    @RequestBody CreateOrUpdateCommentDto comment) {
+        CommentDto commentDTO = commentService.updateComment(adId, commentId, comment);
         return ResponseEntity.ok(commentDTO);
     }
 

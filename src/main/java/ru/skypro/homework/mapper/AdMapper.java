@@ -9,13 +9,14 @@ import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
+import ru.skypro.homework.service.impl.ImageServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @Mapper(componentModel = "spring")
-public abstract  class AdMapper {
+public abstract class AdMapper {
     @Autowired
     ImageServiceImpl imageService;
     public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);

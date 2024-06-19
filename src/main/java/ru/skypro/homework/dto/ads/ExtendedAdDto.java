@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 public class ExtendedAdDto {
+    // расширенное представление объявления
+
     @JsonProperty("pk") // id объявления
     private Integer pk;
 

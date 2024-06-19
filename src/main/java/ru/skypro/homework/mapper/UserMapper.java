@@ -1,21 +1,18 @@
 package ru.skypro.homework.mapper;
 
-import org.mapstruct.IterableMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.skypro.homework.dto.Role;
-import ru.skypro.homework.dto.User.NewPasswordDTO;
-import ru.skypro.homework.dto.User.UpdateUserDTO;
-import ru.skypro.homework.dto.User.UserDTO;
+import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.dto.user.NewPasswordDto;
+import ru.skypro.homework.dto.user.UpdateUserDto;
+import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.repository.LoginRepository;
+import ru.skypro.homework.repository.AuthorityRepository;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.impl.AuthServiceImpl;
-
-import java.util.List;
 
 @Component
 @Mapper(componentModel = "spring",
@@ -28,14 +25,15 @@ public abstract class UserMapper {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    LoginRepository loginRepository;
+    AuthorityRepository authorityRepository;
+
     @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
-    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))")
-    public abstract UserDTO userToUserDto(User user);
+    @Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))", ignore = true)
+    public abstract UserDto userToUserDto(User user);
 
-    public abstract User updateUserDtoToUser(UpdateUserDTO updateUserDto);
+    public abstract User updateUserDtoToUser(UpdateUserDto updateUserDto);
 
-    public abstract UpdateUserDTO updateUserToUserDto(User user);
+    public abstract UpdateUserDto updateUserToUserDto(User user);
     @Mapping(target = "password",source = "newPassword")
-    public abstract User updateNewPasswordDtoToUser(NewPasswordDTO newPasswordDto);
+    public abstract User updateNewPasswordDtoToUser(NewPasswordDto newPasswordDto);
 }

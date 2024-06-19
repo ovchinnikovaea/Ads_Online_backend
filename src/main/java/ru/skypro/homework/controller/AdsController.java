@@ -11,6 +11,7 @@ import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 
@@ -23,6 +24,7 @@ public class AdsController {
     В настоящий момент в контроллере используются предположительные названия методов будущего сервиса
      */
     private final AdService adService;
+    private final CommentService commentService;
 
     @Autowired
     public AdsController(AdService adService, CommentService commentService) {

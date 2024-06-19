@@ -7,6 +7,9 @@ import java.util.List;
 
 @Data
 public class AdsDto {
+
+    // Dto для списка объявлений
+    // где results - коллекция объявлений в формате AdDto
     @JsonProperty("count") // общее количество объявлений
     private Integer count;
 

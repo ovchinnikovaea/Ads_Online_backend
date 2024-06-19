@@ -1,10 +1,10 @@
-package ru.skypro.homework.dto.User;
+package ru.skypro.homework.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class NewPasswordDTO {
+public class NewPasswordDto {
     @JsonProperty("currentPassword")
     private String currentPassword;
     @JsonProperty("newPassword")

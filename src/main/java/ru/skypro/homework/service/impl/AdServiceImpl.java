@@ -19,8 +19,11 @@ import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.ImageService;
+import ru.skypro.homework.service.UserService;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,8 +41,11 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    // Аннотация @Transactional обеспечивает управление транзакциями в методе. Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных. В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных. Если произойдет ошибка, транзакция будет откатана.
-    public AdDto creatAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
+    // Аннотация @Transactional обеспечивает управление транзакциями в методе.
+    // Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных.
+    // В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных.
+    // Если произойдет ошибка, будет выполнен откат транзакции.
+    public AdDto createAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
 
@@ -78,7 +84,7 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public void deletedAd(Integer idPk) {
+    public void deleteAd(Integer idPk) {
         adRepository.delete(getAdById(idPk));
     }
 
