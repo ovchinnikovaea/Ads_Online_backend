@@ -38,8 +38,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
 
     @Override
     public UserDto getUserDto(String userName) {
-        //return userMapper.userToUserDto(getUser(userName));
-        return null; // TODO: вернуть как было
+        return userMapper.userToUserDto(getUser(userName));
     }
 
     @Override
