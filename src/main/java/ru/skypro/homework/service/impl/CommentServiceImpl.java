@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.repository.AdRepository;
@@ -39,19 +41,21 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public CommentsDto getAllCommentsByAuthor(Integer id) {
+    public CommentsDto getAllCommentsByAd(Integer id) {
         List<Comment> comments = commentRepository.findByAdId(id);
         return commentMapper.commentsToCommentsDTO(comments);
     }
 
     @Override
-    public CommentDto addCommentToAd(Integer adId, CreateOrUpdateCommentDto commentDTO) {
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+    public CommentDto addCommentToAd(Integer adId, CreateOrUpdateCommentDto commentDTO, Authentication authentication) {
+        String currentUsername = authentication.getName();
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
+        Ad ad = adRepository.findById(adId)
+                .orElseThrow(() -> new AdNotFoundException("Объявление не найдено"));
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
-        Ad ad = adRepository.findById(adId).orElseThrow(() -> new CommentNotFoundException("Объявление не найдено"));
         comment.setAd(ad);
+        comment.setAuthor(user);
         comment.setText(comment.getText());
         return commentMapper.commentToCommentDTO(commentRepository.save(comment));
     }
@@ -59,7 +63,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(Integer adId, Integer commentId) {
-//        Comment deleteComment = commentRepository.findByAdIdAndId(adId, commentId);
         commentRepository.deleteByAdIdAndId(adId, commentId);
     }
 
