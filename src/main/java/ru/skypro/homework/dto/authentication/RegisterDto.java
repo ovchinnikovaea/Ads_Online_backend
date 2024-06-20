@@ -4,9 +4,11 @@ package ru.skypro.homework.dto.authentication;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
 import ru.skypro.homework.entity.Role;
 
 @Data
+@Getter
 public class RegisterDto {
     // Dto для регистрации пользователя
 

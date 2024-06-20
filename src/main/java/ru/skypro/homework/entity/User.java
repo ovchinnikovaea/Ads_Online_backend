@@ -2,6 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import ru.skypro.homework.config.WebSecurityConfig;
 
 import javax.persistence.*;
 import java.util.Objects;

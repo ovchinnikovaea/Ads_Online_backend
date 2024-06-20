@@ -41,20 +41,12 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    // Аннотация @Transactional обеспечивает управление транзакциями в методе.
-    // Это означает, что все операции в методе будут выполнены в рамках одной транзакции базы данных.
-    // В случае успешного выполнения всех операций транзакция будет закрыта и изменения зафиксированы в базе данных.
-    // Если произойдет ошибка, будет выполнен откат транзакции.
     public AdDto createAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
         Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
-
         ads.setAuthor(user);
-
         Ad savedAds = adRepository.save(ads);
-
         Image adsImage = imageService.addImage(image);
-
         savedAds.setImage(adsImage);
 
         return adMapper.adToAdDto(savedAds);

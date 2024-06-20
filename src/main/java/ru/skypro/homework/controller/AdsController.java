@@ -19,17 +19,11 @@ import javax.validation.Valid;
 @RequestMapping("/ads")
 public class AdsController {
 
-    /*
-    Сервис и интерфейсы будут созданы на этапе 3
-    В настоящий момент в контроллере используются предположительные названия методов будущего сервиса
-     */
     private final AdService adService;
-    private final CommentService commentService;
 
     @Autowired
     public AdsController(AdService adService, CommentService commentService) {
         this.adService = adService;
-        this.commentService = commentService;
     }
 
     /**

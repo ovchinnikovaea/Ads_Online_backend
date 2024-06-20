@@ -14,10 +14,10 @@ public class AuthorityServiceImpl implements AuthorityService {
     private final AuthorityRepository authoritiesRepository;
 
     @Override
-    public void addAuthorities(User user, Role role) {
+    public void addAuthorities(User user) {
         Authority authority = new Authority();
         authority.setUsername(user.getUsername());
-        authority.setAuthority(role.name());
+        //authority.setAuthority(role.name());
 
         authoritiesRepository.save(authority);
     }
