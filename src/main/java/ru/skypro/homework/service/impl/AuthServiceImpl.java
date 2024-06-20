@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean register(RegisterDto registerDto) {
-        if (manager.userExists(registerDto.getUsername())) {/*Методов getUsername, getPassword, getRole не ьыло в Registrer. Они добавлены отдельно*/
+        if (manager.userExists(registerDto.getUsername())) {
             return false;
         }
         manager.createUser(

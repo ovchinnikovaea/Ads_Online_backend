@@ -1,18 +1,23 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.control.MappingControl;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.entity.Role;
+import ru.skypro.homework.dto.authentication.RegisterDto;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
+import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
@@ -20,21 +25,14 @@ import ru.skypro.homework.service.UserService;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl extends UserNotFoundException implements UserService {
     private final AuthorityServiceImpl authorityService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ImageService imageService;
     private final PasswordEncoder encoder;
-
-    public UserServiceImpl(AuthorityServiceImpl authorityService, UserRepository userRepository,
-                           UserMapper userMapper, ImageService imageService, PasswordEncoder encoder) {
-        this.authorityService = authorityService;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.imageService = imageService;
-        this.encoder = encoder;
-    }
+    private final RegisterMapper registerMapper;
 
     @Override
     public UserDto getUserDto(String userName) {
@@ -47,10 +45,20 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     }
 
     @Override
-    public void registerUser(User user, Role role) {
+    public RegisterDto registerUser(RegisterDto body) {
+        User user = new User();
+        user.setUsername(body.getUsername());
+        user.setPassword(encoder.encode(body.getPassword()));
+        user.setFirstName(body.getFirstName());
+        user.setLastName(body.getLastName());
+        user.setPhone(body.getPhone());
+        user.setRole(body.getRole());
+
         user.setEnabled(true);
-        authorityService.addAuthorities(user, role);
-        userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+        authorityService.addAuthorities(user);
+        return registerMapper.userToUserDto(savedUser);
     }
 
     @Override

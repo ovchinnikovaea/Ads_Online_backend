@@ -9,7 +9,7 @@ import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.exception.AdsNotFoundException;
+import ru.skypro.homework.exception.CommentNotFoundException;
 import ru.skypro.homework.mapper.CommentMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
@@ -50,7 +50,7 @@ public class CommentServiceImpl implements CommentService {
         User user = userRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
-        Ad ad = adRepository.findById(adId).orElseThrow(() -> new AdsNotFoundException("Объявление не найдено"));
+        Ad ad = adRepository.findById(adId).orElseThrow(() -> new CommentNotFoundException("Объявление не найдено"));
         comment.setAd(ad);
         comment.setText(comment.getText());
         return commentMapper.commentToCommentDTO(commentRepository.save(comment));

@@ -2,6 +2,7 @@ package ru.skypro.homework.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.authentication.RegisterDto;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
@@ -14,7 +15,7 @@ public interface UserService {
 
     User getUser(String username) throws UserNotFoundException;
 
-    void registerUser(User user, Role role);
+    RegisterDto registerUser(RegisterDto body);
 
     byte[] getUserImage(int id) throws UserNotFoundException;
 
