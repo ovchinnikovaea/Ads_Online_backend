@@ -24,8 +24,7 @@ public class Ad {
     private User author; // множество объявлений - один автор
     private BigDecimal price;
     private String title;
-
-    @OneToMany
+    @OneToOne
     private Image image; // одно объявления - множество изображений
     private String description;
     private LocalDateTime dateTime;

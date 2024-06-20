@@ -28,13 +28,13 @@ public class RegisterDto {
     @JsonProperty("role")
     private Role role;
 
-    public String getUsername() {
-        return "";
-    }
-
-    public String getPassword() {
-        return "";
-    }
+//    public String getUsername() {
+//        return "";
+//    }
+//
+//    public String getPassword() {
+//        return "";
+//    }
 
 //    public <E extends Enum<E>> Enum<E> getRole() {
 //        return null;

@@ -16,12 +16,14 @@ import java.util.Objects;
 @ToString(includeFieldNames=true)
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String email;
     private String firstName;
     private String lastName;
     private String phone;
-    @ManyToOne
+//    @ManyToOne
+    @Enumerated(EnumType.STRING)
     private Role role; // множество пользователей - одна роль
     private String username;
     private String password;
