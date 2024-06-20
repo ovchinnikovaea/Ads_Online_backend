@@ -6,19 +6,25 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.comments.CommentDto;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
+import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 
 @RestController
 @RequestMapping("/ads")
 public class CommentsController {
     private final CommentService commentService;
+    private final CommentRepository commentRepository;
 
-    public CommentsController(CommentService commentService) {
+    public CommentsController(CommentService commentService, CommentRepository commentRepository) {
         this.commentService = commentService;
+        this.commentRepository = commentRepository;
     }
 
     @ApiResponses(value = {
@@ -34,8 +40,8 @@ public class CommentsController {
     })
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<CommentsDto> getAllCommentsByAuthor(@PathVariable int id) {
-        CommentsDto commentsDTO = commentService.getAllCommentsByAuthor(id);
+    public ResponseEntity<CommentsDto> getAllCommentsByAd(@PathVariable int id) {
+        CommentsDto commentsDTO = commentService.getAllCommentsByAd(id);
         return ResponseEntity.ok(commentsDTO);
     }
 
@@ -51,8 +57,9 @@ public class CommentsController {
     })
     @PostMapping("/{id}/comments")
     public ResponseEntity<CommentDto> addComment(@PathVariable Integer id,
-                                                 @RequestBody CreateOrUpdateCommentDto comment) {
-        CommentDto commentDTO = commentService.addCommentToAd(id, comment);
+                                                 @RequestBody CreateOrUpdateCommentDto comment,
+                                                 Authentication authentication) {
+        CommentDto commentDTO = commentService.addCommentToAd(id, comment, authentication);
         return ResponseEntity.ok(commentDTO);
     }
 
@@ -66,6 +73,7 @@ public class CommentsController {
             @ApiResponse(responseCode = "404",
                     content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).orElse(null)?.author?.username == authentication.name")
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Integer adId,
                                               @PathVariable Integer commentId) {
@@ -85,6 +93,7 @@ public class CommentsController {
             @ApiResponse(responseCode = "404",
                     content = @Content)
     })
+    @PreAuthorize("hasRole('ADMIN') or @commentRepository.findById(#commentId).orElse(null)?.author?.username == authentication.name")
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<CommentDto> updateComment(@PathVariable Integer adId,
                                                     @PathVariable Integer commentId,

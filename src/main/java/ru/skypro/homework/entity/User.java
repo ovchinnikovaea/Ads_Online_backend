@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Slf4j
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Getter
 @Setter
 @EqualsAndHashCode
