@@ -17,6 +17,7 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.CommentService;
 
 @RestController
+@CrossOrigin//(value = "http://localhost:3000")
 @RequestMapping("/ads")
 public class CommentsController {
     private final CommentService commentService;
@@ -40,7 +41,7 @@ public class CommentsController {
     })
 
     @GetMapping("/{id}/comments")
-    public ResponseEntity<CommentsDto> getAllCommentsByAd(@PathVariable int id) {
+    public ResponseEntity<CommentsDto> getComments(@PathVariable int id) {
         CommentsDto commentsDTO = commentService.getAllCommentsByAd(id);
         return ResponseEntity.ok(commentsDTO);
     }

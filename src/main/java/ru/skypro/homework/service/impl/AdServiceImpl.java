@@ -4,107 +4,132 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.beans.factory.annotation.Value;
 import ru.skypro.homework.dto.ads.AdDto;
 import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
+import org.springframework.security.core.context.SecurityContextHolder;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.exception.AdNotFoundException;
-import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.ImageRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
-import ru.skypro.homework.service.UserService;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
-    private final UserService userService;
-    private final ImageService imageService;
     private final AdMapper adMapper;
+    private final ImageRepository imageRepository;
+    private final UserRepository userRepository;
+    private final ImageService imageService;
+
+    @Value("${image.dir.path}")
+    private String imagesDir;
+
+    private String objectAuthentication() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ((UserDetails) authentication.getPrincipal()).getUsername();
+    }
 
     @Override
     public AdsDto getAllAds() {
-        return adMapper.getAds(adRepository.findAll());
+        List<AdDto> collect = adRepository.findAll().stream()
+                .map(adMapper::adToAdDto)
+                .collect(Collectors.toList());
+        return new AdsDto(collect.size(), collect);
     }
 
     @Override
     @Transactional
-    public AdDto createAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
-        User user = userService.getUser(authentication.getName());
-        Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
-        ads.setAuthor(user);
-        Ad savedAds = adRepository.save(ads);
-        Image adsImage = imageService.addImage(image);
-        savedAds.setImage(adsImage);
+    public CreateOrUpdateAdDto createAd(Authentication authentication, CreateOrUpdateAdDto createAd, MultipartFile file) throws IOException {
 
-        return adMapper.adToAdDto(savedAds);
-    }
-
-    @Override
-    public ExtendedAdDto getExtendedAdDto(Integer idPk) {
-        return adMapper.adToExtendedAdDto(getAdById(idPk));
-    }
-
-    @Override
-    public AdDto updateAd(Integer idPk, CreateOrUpdateAdDto createOrUpdateAdDto) {
-        Ad oldAds = getAdById(idPk);
-        Ad infoToUpdate = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
-
-        oldAds.setPrice(infoToUpdate.getPrice());
-        oldAds.setTitle(infoToUpdate.getTitle());
-        oldAds.setDescription(infoToUpdate.getDescription());
-
-        Ad updatedAds = adRepository.save(oldAds);
-        return adMapper.adToAdDto(updatedAds);
-    }
-
-    @Override
-    public AdsDto getAdsDtoMe(String userName) {
-        return adMapper.getAds(adRepository.findByAuthorId(userService.getUser(userName).getId()).orElse(new ArrayList<>()));
-    }
-
-    @Override
-    public void deleteAd(Integer idPk) {
-        adRepository.delete(getAdById(idPk));
-    }
-
-    @Override
-    public byte[] updateImage(int id, MultipartFile image) {
-        Ad ad = getAdById(id);
-        ad.setImage(imageService.addImage(image));
+        User user = userRepository.findByUsername(authentication.getName()).get();
+        Ad ad = new Ad();
+        ad.setTitle(createAd.getTitle());
+        ad.setPrice(createAd.getPrice());
+        ad.setDescription(createAd.getDescription());
+        ad.setAuthor(user);
         adRepository.save(ad);
 
-        return getAdImage(id);
+//        Image image = new Image();
+        Image image = imageService.addImage(file);
+        image.setFileSize(file.getSize());
+        image.setMediaType(file.getContentType());
+        image.setData(file.getBytes());
+        imageRepository.save(image);
+
+        ad.setImages(image);
+        adRepository.save(ad);
+        return adMapper.updateAdToDto(ad);
     }
 
     @Override
-    public byte[] getAdImage(int id) {
-        Ad ad = adRepository.findById(id).orElseThrow(AdNotFoundException::new);
-
-        if (ad.getImage() == null) {
-            throw new ImageNotFoundException();
-        }
-
-        return imageService.getImageData(ad.getImage().getId());
+    public CreateOrUpdateAdDto updateAd(Integer id, CreateOrUpdateAdDto createOrUpdateAdDto) {
+        Ad adEntity = adRepository.findById(id).get();
+        adEntity.setTitle(createOrUpdateAdDto.getTitle());
+        adEntity.setPrice(createOrUpdateAdDto.getPrice());
+        adEntity.setDescription(createOrUpdateAdDto.getDescription());
+        adRepository.save(adEntity);
+        return adMapper.updateAdToDto(adEntity);
     }
 
     @Override
-    public Ad getAdById(Integer id) {
-        return adRepository.findById(id).orElseThrow(AdNotFoundException::new);
+    public AdsDto getAdsDtoMy(Authentication authentication) {
+        return null;
     }
 
+    @Override
+    public void deleteAd(Integer id) {
+        adRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateImage(Integer id, MultipartFile file) throws IOException {
+
+        Ad ad = findAd(id);
+
+        Image image = ad.getImages();
+        image.setFileSize(file.getSize());
+        image.setMediaType(file.getContentType());
+        image.setData(file.getBytes());
+        imageRepository.save(image);
+
+        ad.setImages(image);
+        adRepository.save(ad);
+    }
+
+    @Override
+    public ExtendedAdDto getAdById(Integer id) {
+        return adRepository.findById(id).map(adMapper::adToExtendedAdDto).orElse(null);
+    }
+
+    public Optional<Ad> findAdById(Integer id) {
+        return adRepository.findById(id);
+    }
+    public Ad findAd(Integer id) {
+        return adRepository.findById(id).get();
+    }
+
+    @Override
+    public byte[] getImage(Integer id) {
+        return adRepository.findById(id).map(Ad::getImages).map(Image::getData).orElse(null);
+    }
 }
 
 

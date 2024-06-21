@@ -1,9 +1,13 @@
 package ru.skypro.homework.dto.ads;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExtendedAdDto {
     // расширенное представление объявления
 
@@ -22,8 +26,8 @@ public class ExtendedAdDto {
     @JsonProperty("email") // email автора объявления
     private String email;
 
-    @JsonProperty("image") // ссылка на картинку объявления
-    private String image;
+    @JsonProperty("images") // ссылка на картинку объявления
+    private String images;
 
     @JsonProperty("phone") // телефон автора объявления
     private String phone;

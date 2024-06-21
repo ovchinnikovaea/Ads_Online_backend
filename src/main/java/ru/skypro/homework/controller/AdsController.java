@@ -1,7 +1,9 @@
 package ru.skypro.homework.controller;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,34 +12,46 @@ import ru.skypro.homework.dto.ads.AdDto;
 import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
+import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.service.CommentService;
-
+import java.io.IOException;
 import javax.validation.Valid;
 
+@Slf4j
+@CrossOrigin//(value = "http://localhost:3000")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/ads")
 public class AdsController {
 
     private final AdService adService;
 
-    @Autowired
-    public AdsController(AdService adService, CommentService commentService) {
-        this.adService = adService;
+    /**
+     * Метод для получения всех объявлений
+     * @return
+     */
+    @GetMapping
+    public ResponseEntity<AdsDto> getAllAds() {
+        AdsDto ads = adService.getAllAds();
+        return ResponseEntity.ok(ads);
     }
 
     /**
      * Метод для создания объявления
-     * @param properties
-     * @param image
-     * @param authentication
-     * @return
+     * @param properties имеет формат CreateOrUpdateAdDto и включает поля: description, title, price
+     * @param image изображение в формате MultipartFile
+     * @param authentication проверка аутентификации авторизованного пользователя
+     * @return возвращает сообщение в формате HttpStatus.CREATED
      */
-    @PostMapping
-    public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
-                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image,
-                                       Authentication authentication) {
-        return new ResponseEntity<>(adService.createAd(properties, image, authentication), HttpStatus.CREATED);
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<CreateOrUpdateAdDto> addAd(Authentication authentication,
+                                       @RequestPart(value = "properties", required = true) CreateOrUpdateAdDto properties,
+                                       @RequestPart(value = "image", required = true) MultipartFile image) throws IOException {
+        if (image == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+//        CreateOrUpdateAdDto createAd = adService.createAd(authentication, properties, image);
+        return new ResponseEntity<>(adService.createAd(authentication, properties, image), HttpStatus.CREATED);
     }
 
     /**
@@ -47,26 +61,11 @@ public class AdsController {
      */
     @GetMapping(value = "/{id}")
     public ResponseEntity<ExtendedAdDto> getAds(@PathVariable("id") Integer id) {
-        return ResponseEntity.ok(adService.getExtendedAdDto(id));
-    }
-
-    /**
-     * Метод для получения объявлений авторизованного пользователя
-     * @param authentication
-     * @return
-     */
-    @GetMapping(value = "/me")
-    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
-        return ResponseEntity.ok(adService.getAdsDtoMe(authentication.getName()));
-    }
-
-    /**
-     * Метод для получения всех объявлений
-     * @return
-     */
-    @GetMapping
-    public ResponseEntity<AdsDto> getAds() {
-        return ResponseEntity.ok(adService.getAllAds());
+        ExtendedAdDto extendedAd = adService.getAdById(id);
+        if (extendedAd == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(extendedAd);
     }
 
     /**
@@ -75,7 +74,7 @@ public class AdsController {
      * @return
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> removeAd(@PathVariable("id") Integer id) {
         adService.deleteAd(id);
         return ResponseEntity.ok().build();
     }
@@ -87,9 +86,20 @@ public class AdsController {
      * @return
      */
     @PatchMapping(value = "/{id}")
-    public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id,
+    public ResponseEntity<CreateOrUpdateAdDto> updateAds(@PathVariable("id") Integer id,
                                            @Valid @RequestBody CreateOrUpdateAdDto body) {
         return ResponseEntity.ok(adService.updateAd(id, body));
+    }
+
+    /**
+     * Метод для получения объявлений авторизованного пользователя
+     * @param authentication
+     * @return
+     */
+    @GetMapping(value = "/me")
+    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
+        AdsDto ads = adService.getAdsDtoMy(authentication);
+        return ResponseEntity.ok(ads);
     }
 
     /**
@@ -98,9 +108,13 @@ public class AdsController {
      * @param image
      * @return
      */
-    @PatchMapping(value = "/{id}/image")
-    public ResponseEntity<byte[]> updateImage(@PathVariable("id") Integer id,
-                                              @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
-        return ResponseEntity.ok(adService.updateImage(id, image));
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Ad> updateImage(@PathVariable("id") Integer id,
+                                          @RequestParam MultipartFile image) throws IOException {
+        if (adService.findAdById(id).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        adService.updateImage(id, image);
+        return ResponseEntity.ok().build();
     }
 }

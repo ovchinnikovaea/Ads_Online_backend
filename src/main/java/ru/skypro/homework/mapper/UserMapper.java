@@ -2,23 +2,18 @@ package ru.skypro.homework.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.entity.Role;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.service.ImageService;
 
 @Component
 @Mapper(componentModel = "spring", imports = {Role.class})
-public abstract class UserMapper {
-    @Autowired
-    ImageService imageService;
+public interface UserMapper {
 
-    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
-    //@Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))", ignore = true)
+    @Mapping(target = "image", expression = "java(user.getImage() != null ? \"/avatars/\"+user.getId() : null)")
     public abstract UserDto userToUserDto(User user);
 
     public abstract User updateUserDtoToUser(UpdateUserDto updateUserDto);

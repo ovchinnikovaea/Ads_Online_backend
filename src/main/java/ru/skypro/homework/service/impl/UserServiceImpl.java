@@ -2,9 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.control.MappingControl;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,16 +10,17 @@ import ru.skypro.homework.dto.authentication.RegisterDto;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
-import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.mapper.UserMapper;
+import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -30,7 +29,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     private final AuthorityServiceImpl authorityService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final ImageService imageService;
+    private final ImageRepository imageRepository;
     private final PasswordEncoder encoder;
     private final RegisterMapper registerMapper;
 
@@ -63,13 +62,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
 
     @Override
     public byte[] getUserImage(int id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-
-        if (user.getImage() == null) {
-            throw new ImageNotFoundException();
-        }
-
-        return imageService.getImageData(user.getImage().getId());
+        return userRepository.findById(id).map(User::getImage).map(Image::getData).orElse(null);
     }
 
     @Override
@@ -93,12 +86,22 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     }
 
     @Override
-    public void uploadImage(MultipartFile imageMultipart, Authentication authentication) throws UserNotFoundException {
-        User user = getUser(authentication.getName());
+    public void uploadImage(Authentication authentication, MultipartFile file) throws IOException {
 
-        Image image = imageService.addImage(imageMultipart);
-        user.setImage(image);
+        User users = userRepository.findByUsername(authentication.getName()).get();
 
-        userRepository.save(user);
+        Image image = Optional.ofNullable(users.getImage()).orElseGet(Image::new);
+        image.setFileSize(file.getSize());
+        image.setMediaType(file.getContentType());
+        image.setData(file.getBytes());
+        imageRepository.save(image);
+
+        users.setImage(image);
+        userRepository.save(users);
+    }
+
+    @Override
+    public byte[] getImage(Integer id) {
+        return userRepository.findById(id).map(User::getImage).map(Image::getData).orElse(null);
     }
 }

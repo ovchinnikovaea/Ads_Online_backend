@@ -1,26 +1,32 @@
 package ru.skypro.homework.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Getter
-@Setter
-@EqualsAndHashCode
-@ToString
+@Entity(name = "image")
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "size")
+    private Long fileSize;
+
+    @Column(name = "file_path")
     private String filePath;
+
+    @Column(name = "media_type")
     private String mediaType;
 
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+    @Column(name = "data")
+    private byte[] data;
 }

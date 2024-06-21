@@ -8,7 +8,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import ru.skypro.homework.entity.User;
 
 
 @Entity
@@ -18,16 +17,25 @@ import ru.skypro.homework.entity.User;
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Integer id;
 
     @ManyToOne
+    @JoinColumn(name = "author_id")
     private User author; // множество объявлений - один автор
+
+    @Column(name = "price")
     private BigDecimal price;
+
+    @Column(name = "title")
     private String title;
+
     @OneToOne
-    private Image image; // одно объявления - множество изображений
+    @JoinColumn(name = "image_id")
+    private Image images; // одно объявления - множество изображений
+
+    @Column(name = "description")
     private String description;
-    private LocalDateTime dateTime;
 
     @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL)
     private List<Comment> comments; // одно объявление - множество комментариев
