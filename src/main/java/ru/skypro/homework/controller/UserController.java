@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin
+@CrossOrigin//(value = "http://localhost:3000")
 @RequestMapping("/users")
 public class UserController {
 

@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,6 +19,7 @@ import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 
+@CrossOrigin//(value = "http://localhost:3000")
 @RestController
 @CrossOrigin
 @RequestMapping("/ads")
@@ -62,7 +64,31 @@ public class AdsController {
     public ResponseEntity<ExtendedAdDto> getAds(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(adService.getExtendedAdDto(id));
     }
+    /**
+     * Метод для получения объявлений авторизованного пользователя
+     * @param authentication
+     * @return
+     */
+    @GetMapping(value = "/me")
+    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
+        return ResponseEntity.ok(adService.getAdsDtoMe(authentication.getName()));
+    }
 
+    /**
+     * Метод для получения всех объявлений
+     * @return
+     */
+    @PreAuthorize("permitAll()")
+    @GetMapping
+    public ResponseEntity<AdsDto> getAds() {
+        return ResponseEntity.ok(adService.getAllAds());
+    }
+
+    /**
+     * Метод для удаления объявления по id
+     * @param id
+     * @return
+     */
     @Operation(summary = "Удаление объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "No Content"),
@@ -70,11 +96,20 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
+    @PreAuthorize("hasRole('ADMIN') or @adRepository.findById(#adId)?.get()?.author?.username == principal.username")
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> removeAd(@PathVariable("id") Integer id) {
         adService.deleteAd(id);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Метод для обновления информации об объявлении
+     * @param id
+     * @param body
+     * @return
+     */
 
     @Operation(summary = "Обновление информации об объявлении")
     @ApiResponses(value = {

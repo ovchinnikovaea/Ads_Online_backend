@@ -3,15 +3,14 @@ package ru.skypro.homework.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-
-import javax.sql.DataSource;
+import ru.skypro.homework.security.MyUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -22,7 +21,7 @@ public class WebSecurityConfig {
 
     // Подключение DataSource для обеспечения соединения с БД
     @Autowired
-    private DataSource dataSource;
+    private MyUserDetailsService myUserDetailsService;
 
     private static final String[] AUTH_WHITELIST = {
             "/swagger-resources/**",
@@ -32,11 +31,6 @@ public class WebSecurityConfig {
             "/login",
             "/register"
     };
-
-    @Bean
-    public JdbcUserDetailsManager userDetailsService() {
-        return new JdbcUserDetailsManager(dataSource);
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -53,6 +47,10 @@ public class WebSecurityConfig {
                 .and()
                 .httpBasic(withDefaults());
         return http.build();
+    }
+
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(myUserDetailsService).passwordEncoder(passwordEncoder());
     }
 
     @Bean
