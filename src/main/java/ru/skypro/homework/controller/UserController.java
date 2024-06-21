@@ -1,6 +1,9 @@
 package ru.skypro.homework.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,22 +23,41 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    @Operation(summary = "Обновление пароля")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @PostMapping(value = "/set_password")
+    public ResponseEntity<?> setPassword(@RequestBody NewPasswordDto body, Authentication authentication) {
+        userService.updateNewPassword(body, authentication);
+        return ResponseEntity.ok().build();
+    }
+    @Operation(summary = "Получение информации об авторизованном пользователе")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @GetMapping(value = "/me")
     public ResponseEntity<UserDto> getUser(Authentication authentication) {
         return ResponseEntity.ok(userService.getUserDto(authentication.getName()));
     }
+    @Operation(summary = "Обновление информации об авторизованном пользователе")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
 
-    @PostMapping(value = "/set_password")
-    public ResponseEntity<?> setPassword(@Valid @RequestBody NewPasswordDto body, Authentication authentication) {
-        userService.updateNewPassword(body, authentication);
-        return ResponseEntity.ok().build();
-    }
-
+    })
     @PatchMapping(value = "/me")
-    public ResponseEntity<UpdateUserDto> UpdateUserDto(@Valid @RequestBody UpdateUserDto body, Authentication authentication) {
+    public ResponseEntity<UpdateUserDto> UpdateUser(@Valid @RequestBody UpdateUserDto body, Authentication authentication) {
         return ResponseEntity.ok(userService.updateUser(body, authentication));
     }
+    @Operation(summary = "Обновление аватара авторизованного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
 
     @PatchMapping(value = "/me/image")
     public ResponseEntity<Void> updateUserImage(@Valid @RequestPart(value = "image", required = false) MultipartFile image, Authentication authentication) {
@@ -43,8 +65,5 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{id}/image")
-    public ResponseEntity<byte[]> getUserImage(@PathVariable int id) {
-        return ResponseEntity.ok(userService.getUserImage(id));
-    }
+
 }

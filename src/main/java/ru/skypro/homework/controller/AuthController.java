@@ -1,5 +1,8 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,11 +22,16 @@ import javax.validation.Valid;
 @Slf4j
 @CrossOrigin//(value = "http://localhost:3000")
 @RestController
+
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
     private final UserService userService;
-
+    @Operation(summary = "Авторизация пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDTO) {
         if (authService.login(loginDTO.getUsername(), loginDTO.getPassword())) {
@@ -32,31 +40,14 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
+    @Operation(summary = "Регистрация пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "400", description = "Bad Request")
+    })
     @PostMapping("/register")
     public ResponseEntity<RegisterDto> register(@Valid @RequestBody RegisterDto body) {
-        //authService.register(body);
+
         return new ResponseEntity<>(userService.registerUser(body), HttpStatus.CREATED);
-//        if (authService.register(body)) {
-//            return ResponseEntity.status(HttpStatus.CREATED).build();
-//        } else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-//        }
-//        public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
-//                @Valid @RequestPart(value = "image", required = false) MultipartFile image,
-//                Authentication authentication) {
-//            return new ResponseEntity<>(adService.createAd(properties, image, authentication), HttpStatus.CREATED);
-//        }
-
-
-//        User user = new User();
-//        user.setUsername(registerDto.getUsername());
-//        user.setPassword(registerDto.getPassword());
-//        user.setFirstName(registerDto.getFirstName());
-//        user.setLastName(registerDto.getLastName());
-//        user.setPhone(registerDto.getPhone());
-//        user.setRole(registerDto.getRole());
-//        userService.registerUser(user, registerDto.getRole());
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 }
