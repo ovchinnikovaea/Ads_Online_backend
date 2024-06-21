@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,7 +9,6 @@ import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.service.UserService;
-import org.springframework.http.ResponseEntity;
 
 import javax.validation.Valid;
 
@@ -37,7 +37,9 @@ public class UserController {
     }
 
     @PatchMapping(value = "/me/image")
-    public ResponseEntity<Void> updateUserImage(@Valid @RequestPart(value = "image", required = false) MultipartFile image, Authentication authentication) {
+    public ResponseEntity<Void> updateUserImage(
+            @Valid @RequestPart(value = "image", required = false) MultipartFile image,
+            Authentication authentication) {
         userService.uploadImage(image, authentication);
         return ResponseEntity.ok().build();
     }
