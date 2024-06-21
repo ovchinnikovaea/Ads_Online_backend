@@ -4,6 +4,4 @@ import ru.skypro.homework.dto.authentication.RegisterDto;/*изначально 
 
 public interface AuthService {
     boolean login(String userName, String password);
-
-    boolean register(RegisterDto registerDto);
 }

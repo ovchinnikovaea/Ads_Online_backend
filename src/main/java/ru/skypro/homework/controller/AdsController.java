@@ -1,5 +1,7 @@
 package ru.skypro.homework.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 
+@CrossOrigin//(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
 public class AdsController {
@@ -64,6 +67,7 @@ public class AdsController {
      * Метод для получения всех объявлений
      * @return
      */
+    @PreAuthorize("permitAll()")
     @GetMapping
     public ResponseEntity<AdsDto> getAds() {
         return ResponseEntity.ok(adService.getAllAds());
@@ -74,6 +78,8 @@ public class AdsController {
      * @param id
      * @return
      */
+    @PreAuthorize("hasRole('ADMIN') or @adRepository.findById(#adId)?.get()?.author?.username == principal.username")
+
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) {
         adService.deleteAd(id);
@@ -86,6 +92,8 @@ public class AdsController {
      * @param body
      * @return
      */
+//    @PreAuthorize("hasRole('ADMIN') or @adRepository.findById(#adId).orElse(null)?.author?.username == principal.username")
+
     @PatchMapping(value = "/{id}")
     public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id,
                                            @Valid @RequestBody CreateOrUpdateAdDto body) {
