@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Getter
@@ -20,7 +21,7 @@ public class Comment {
     @JoinColumn(name = "user_id")
     private User author; // множество комментариев - один автор
 
-    private Integer createdAt;
+    private Long createdAt;
     private String text;
 
     @ManyToOne
@@ -34,7 +35,6 @@ public class Comment {
                    String text,
                    Ad ad) {
         this.author = author;
-        this.createdAt = (int) (Instant.now().toEpochMilli() / 1000L);
         this.text = text;
         this.ad = ad;
     }

@@ -13,7 +13,7 @@ public class CommentDto {
     @JsonProperty("authorFirstName")
     private String authorFirstName;
     @JsonProperty("createdAt")
-    private Integer createdAt;
+    private Long createdAt;
     @JsonProperty("pk")
     private Integer pk;
     @JsonProperty("text")
