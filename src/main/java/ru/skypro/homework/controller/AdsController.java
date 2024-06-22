@@ -1,7 +1,9 @@
 package ru.skypro.homework.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.security.core.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,7 @@ import javax.validation.Valid;
 
 @CrossOrigin//(value = "http://localhost:3000")
 @RestController
+@CrossOrigin
 @RequestMapping("/ads")
 public class AdsController {
 
@@ -29,13 +32,20 @@ public class AdsController {
         this.adService = adService;
     }
 
-    /**
-     * Метод для создания объявления
-     * @param properties
-     * @param image
-     * @param authentication
-     * @return
-     */
+    @Operation(summary = "Получение всех объявлений")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK")
+    })
+    @GetMapping
+    public ResponseEntity<AdsDto> getAllAds() {
+        return ResponseEntity.ok(adService.getAllAds());
+    }
+
+    @Operation(summary = "Добавление объявления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     @PostMapping
     public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
                                        @Valid @RequestPart(value = "image", required = false) MultipartFile image,
@@ -43,16 +53,17 @@ public class AdsController {
         return new ResponseEntity<>(adService.createAd(properties, image, authentication), HttpStatus.CREATED);
     }
 
-    /**
-     * Метод для получения информации об объявлении
-     * @param id
-     * @return
-     */
+
+    @Operation(summary = "Получение информации об объявлении")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @GetMapping(value = "/{id}")
     public ResponseEntity<ExtendedAdDto> getAds(@PathVariable("id") Integer id) {
         return ResponseEntity.ok(adService.getExtendedAdDto(id));
     }
-
     /**
      * Метод для получения объявлений авторизованного пользователя
      * @param authentication
@@ -78,10 +89,17 @@ public class AdsController {
      * @param id
      * @return
      */
+    @Operation(summary = "Удаление объявления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No Content"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasRole('ADMIN') or @adRepository.findById(#adId)?.get()?.author?.username == principal.username")
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deleteAd(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> removeAd(@PathVariable("id") Integer id) {
         adService.deleteAd(id);
         return ResponseEntity.ok().build();
     }
@@ -92,20 +110,42 @@ public class AdsController {
      * @param body
      * @return
      */
-//    @PreAuthorize("hasRole('ADMIN') or @adRepository.findById(#adId).orElse(null)?.author?.username == principal.username")
 
+    @Operation(summary = "Обновление информации об объявлении")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PatchMapping(value = "/{id}")
     public ResponseEntity<AdDto> updateAds(@PathVariable("id") Integer id,
                                            @Valid @RequestBody CreateOrUpdateAdDto body) {
         return ResponseEntity.ok(adService.updateAd(id, body));
     }
 
-    /**
-     * Метод для обновления картинки для объявления
-     * @param id
-     * @param image
-     * @return
-     */
+    @Operation(summary = "Получение объявлений авторизованного пользователя")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+
+    })
+    @GetMapping(value = "/me")
+    public ResponseEntity<AdsDto> getAdsMe(Authentication authentication) {
+        return ResponseEntity.ok(adService.getAdsDtoMe(authentication.getName()));
+    }
+
+
+
+
+
+    @Operation(summary = "Обновление картинки объявления")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PatchMapping(value = "/{id}/image")
     public ResponseEntity<byte[]> updateImage(@PathVariable("id") Integer id,
                                               @Valid @RequestPart(value = "image", required = false) MultipartFile image) {

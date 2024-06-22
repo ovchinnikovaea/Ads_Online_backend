@@ -3,6 +3,8 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.control.MappingControl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.ImageNotFoundException;
+import ru.skypro.homework.exception.SuchAUserAlreadyExists;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.mapper.UserMapper;
@@ -45,7 +48,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     }
 
     @Override
-    public RegisterDto registerUser(RegisterDto body) {
+    public RegisterDto registerUser(RegisterDto body) throws SuchAUserAlreadyExists {
         User user = new User();
         user.setUsername(body.getUsername());
         user.setPassword(encoder.encode(body.getPassword()));
@@ -53,12 +56,13 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
         user.setLastName(body.getLastName());
         user.setPhone(body.getPhone());
         user.setRole(body.getRole());
-
         user.setEnabled(true);
-
-        User savedUser = userRepository.save(user);
+        if(userRepository.findAll().contains(user)) {
+            throw new SuchAUserAlreadyExists();
+        }
+        userRepository.save(user);
         authorityService.addAuthorities(user);
-        return registerMapper.userToUserDto(savedUser);
+        return registerMapper.userToUserDto(user);
     }
 
     @Override
