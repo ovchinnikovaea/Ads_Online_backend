@@ -14,7 +14,7 @@ import java.util.Optional;
 
 public interface AdService {
     AdsDto getAllAds();
-    CreateOrUpdateAdDto createAd(Authentication authentication, CreateOrUpdateAdDto createAd, MultipartFile file) throws IOException;
+    AdDto createAd(CreateOrUpdateAdDto createAd, MultipartFile file, Authentication authentication);
 //    ResponseEntity<ExtendedAdDto> getExtendedAdDto(Integer id);
     CreateOrUpdateAdDto updateAd(Integer id, CreateOrUpdateAdDto createOrUpdateAdDto);
 

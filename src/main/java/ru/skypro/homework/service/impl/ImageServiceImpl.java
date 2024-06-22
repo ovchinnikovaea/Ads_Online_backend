@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.UploadFileException;
+import ru.skypro.homework.exception.ImageNotFoundException;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
@@ -58,5 +61,43 @@ public class ImageServiceImpl implements ImageService {
         imageRepository.save(image);
 
         return image;
+    }
+
+    @Override
+    public Image getImage(Integer id) {
+        return imageRepository.findById(id).orElseThrow(ImageNotFoundException::new);
+    }
+
+    @Override
+    public byte[] getImageData(Integer id) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(getImage(id).getFilePath());
+            BufferedInputStream bis = new BufferedInputStream(fileInputStream);
+
+            byte[] imageData = bis.readAllBytes();
+
+            bis.close();
+            fileInputStream.close();
+
+            return imageData;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public String getAdImageUrl(int adId) {
+        return "/ads/" + adId + "/image";
+    }
+
+    @Override
+    public String getUserImageUrl(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (user.getImage() == null) {
+            return null;
+        }
+
+        return "/users/" + userId + "/image";
     }
 }

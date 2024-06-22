@@ -70,14 +70,14 @@ public class AdsController {
             }
     )
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<CreateOrUpdateAdDto> addAd(Authentication authentication,
-                                       @RequestPart(value = "properties", required = true) CreateOrUpdateAdDto properties,
-                                       @RequestPart(value = "image", required = true) MultipartFile image) throws IOException {
+    public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = true) CreateOrUpdateAdDto properties,
+                                       @Valid @RequestPart(value = "image", required = true) MultipartFile image,
+                                       Authentication authentication) {
         if (image == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 //        CreateOrUpdateAdDto createAd = adService.createAd(authentication, properties, image);
-        return new ResponseEntity<>(adService.createAd(authentication, properties, image), HttpStatus.CREATED);
+        return new ResponseEntity<>(adService.createAd(properties, image, authentication), HttpStatus.CREATED);
     }
 
     @Operation(

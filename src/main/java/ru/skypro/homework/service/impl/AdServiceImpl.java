@@ -22,6 +22,7 @@ import ru.skypro.homework.repository.ImageRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdService;
 import ru.skypro.homework.service.ImageService;
+import ru.skypro.homework.service.UserService;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final AdMapper adMapper;
     private final ImageRepository imageRepository;
+    private final UserService userService;
     private final UserRepository userRepository;
     private final ImageService imageService;
 
@@ -69,22 +71,35 @@ public class AdServiceImpl implements AdService {
      */
     @Override
     @Transactional
-    public CreateOrUpdateAdDto createAd(Authentication authentication, CreateOrUpdateAdDto createAd, MultipartFile file) throws IOException {
+    public AdDto createAd(CreateOrUpdateAdDto createAd, MultipartFile file, Authentication authentication) {
 
-        User user = userRepository.findByUsername(authentication.getName()).get();
-        Image image = imageService.addImage(file);
-        image.setFileSize(file.getSize());
-        image.setMediaType(file.getContentType());
-        image.setData(file.getBytes());
+//        User user = userRepository.findByUsername(authentication.getName()).get();
+//        Image image = imageService.addImage(file);
+//        image.setFileSize(file.getSize());
+//        image.setMediaType(file.getContentType());
+//        image.setData(file.getBytes());
+//
+//        Ad ad = new Ad();
+//        ad.setTitle(createAd.getTitle());
+//        ad.setPrice(createAd.getPrice());
+//        ad.setDescription(createAd.getDescription());
+//        ad.setAuthor(user);
+//        ad.setImages(image);
+//        adRepository.save(ad);
+//        return adMapper.updateAdToDto(ad);
 
-        Ad ad = new Ad();
-        ad.setTitle(createAd.getTitle());
-        ad.setPrice(createAd.getPrice());
-        ad.setDescription(createAd.getDescription());
-        ad.setAuthor(user);
-        ad.setImages(image);
-        adRepository.save(ad);
-        return adMapper.updateAdToDto(ad);
+        User user = userService.getUser(authentication.getName());
+        Ad ads = adMapper.createAdsDtoToAds(createAd);
+
+        ads.setAuthor(user);
+
+        Ad savedAds = adRepository.save(ads);
+
+        Image adsImage = imageService.addImage(file);
+
+        savedAds.setImages(adsImage);
+
+        return adMapper.adToAdDto(savedAds);
     }
 
     /**
