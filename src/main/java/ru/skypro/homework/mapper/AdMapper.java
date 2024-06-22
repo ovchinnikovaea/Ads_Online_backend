@@ -21,6 +21,7 @@ public interface AdMapper {
     @Mapping(target = "price", source = "price")
     @Mapping(target = "title", source = "title")
     @Mapping(target = "images", expression = "java(\"/images/\"+ad.getId())")
+//    @Mapping(target = "users")
     AdDto adToAdDto(Ad ad);
 
     @Mapping(target = "pk", source = "id")

@@ -20,29 +20,29 @@ import java.util.Objects;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id") // Id
     private Integer id;
 
-    @Column(name = "email")
+    @Column(name = "email") // адрес эл.почты
     private String email;
 
-    @Column(name = "firstName")
+    @Column(name = "firstName") // имя
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "lastName") // фамилия
     private String lastName;
 
-    @Column(name = "phone")
+    @Column(name = "phone") // номер телефона
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
+    @Column(name = "role") // привилегии
     private Role role;
 
-    @Column(name = "username")
+    @Column(name = "username") // логин
     private String username;
 
-    @Column(name = "password")
+    @Column(name = "password") // пароль
     private String password;
 
     private boolean enabled;
@@ -50,4 +50,7 @@ public class User {
     @OneToOne
     @JoinColumn(name = "image_id")
     private Image image; // один пользователь - одно изображение
+
+//    @OneToMany(mappedBy = "users")
+//    private List<Ad> adEntityList;
 }

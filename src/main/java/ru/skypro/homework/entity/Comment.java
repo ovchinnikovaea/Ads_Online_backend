@@ -18,23 +18,24 @@ import java.util.Objects;
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // Id
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User author; // множество комментариев - один автор
+    @JoinColumn(name = "user_id") // множество комментариев - один автор
+    private User author;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    @Column(name = "create_at")
+    @Column(name = "create_at") // дата-время создания
     private Integer createdAt;
 
-    @Column(name = "text")
+    @Column(name = "text") // текст
     private String text;
 
     @ManyToOne
-    @JoinColumn(name = "ads_id")
-    private Ad ad; // множество комментариев - одно объявление
+    @JoinColumn(name = "ads_id") // множество комментариев - одно объявление
+    private Ad ad;
 
     public Comment() {
     }

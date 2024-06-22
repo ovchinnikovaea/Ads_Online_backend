@@ -11,19 +11,9 @@ import javax.annotation.Resource;
 @NoArgsConstructor
 public class AdsBodyDto {
 
-    @JsonProperty("properties")
+    @JsonProperty("properties") // title, price, description
     private CreateOrUpdateAdDto properties = null;
 
-    @JsonProperty("images")
+    @JsonProperty("images") // ссылка на картинку объявления
     private Resource images = null;
-
-    public AdsBodyDto properties (CreateOrUpdateAdDto properties) {
-        this.properties = properties;
-        return this;
-    }
-
-    public AdsBodyDto image(Resource images) {
-        this.images = images;
-        return this;
-    }
 }

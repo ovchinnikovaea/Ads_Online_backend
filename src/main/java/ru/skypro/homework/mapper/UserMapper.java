@@ -14,12 +14,12 @@ import ru.skypro.homework.entity.User;
 public interface UserMapper {
 
     @Mapping(target = "image", expression = "java(user.getImage() != null ? \"/avatars/\"+user.getId() : null)")
-    public abstract UserDto userToUserDto(User user);
+    UserDto userToUserDto(User user);
 
-    public abstract User updateUserDtoToUser(UpdateUserDto updateUserDto);
+    User updateUserDtoToUser(UpdateUserDto updateUserDto);
 
-    public abstract UpdateUserDto updateUserToUserDto(User user);
+    UpdateUserDto updateUserToUserDto(User user);
 
     @Mapping(target = "password", source = "newPassword")
-    public abstract User updateNewPasswordDtoToUser(NewPasswordDto newPasswordDto);
+    User updateNewPasswordDtoToUser(NewPasswordDto newPasswordDto);
 }

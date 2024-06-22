@@ -47,6 +47,11 @@ public class AdServiceImpl implements AdService {
         return ((UserDetails) authentication.getPrincipal()).getUsername();
     }
 
+    /**
+     * Метод возвращает список всех объявлений в виде DTO {@link AdDto}.
+     *
+     * @return возвращает все объявления из БД
+     */
     @Override
     public AdsDto getAllAds() {
         List<AdDto> collect = adRepository.findAll().stream()
@@ -55,30 +60,40 @@ public class AdServiceImpl implements AdService {
         return new AdsDto(collect.size(), collect);
     }
 
+    /**
+     * Метод добавляет новое объявление в БД
+     *
+     * @param createAd - DTO модель класса {@link CreateOrUpdateAdDto};
+     * @param file     - фотография объявления
+     * @return возвращает объявление в качестве DTO модели
+     */
     @Override
     @Transactional
     public CreateOrUpdateAdDto createAd(Authentication authentication, CreateOrUpdateAdDto createAd, MultipartFile file) throws IOException {
 
         User user = userRepository.findByUsername(authentication.getName()).get();
+        Image image = imageService.addImage(file);
+        image.setFileSize(file.getSize());
+        image.setMediaType(file.getContentType());
+        image.setData(file.getBytes());
+
         Ad ad = new Ad();
         ad.setTitle(createAd.getTitle());
         ad.setPrice(createAd.getPrice());
         ad.setDescription(createAd.getDescription());
         ad.setAuthor(user);
-        adRepository.save(ad);
-
-//        Image image = new Image();
-        Image image = imageService.addImage(file);
-        image.setFileSize(file.getSize());
-        image.setMediaType(file.getContentType());
-        image.setData(file.getBytes());
-        imageRepository.save(image);
-
         ad.setImages(image);
         adRepository.save(ad);
         return adMapper.updateAdToDto(ad);
     }
 
+    /**
+     * Метод изменяет объявление
+     *
+     * @param id  - id объявления
+     * @param createOrUpdateAdDto - DTO модель класса {@link CreateOrUpdateAdDto};
+     * @return возвращает DTO модель объявления
+     */
     @Override
     public CreateOrUpdateAdDto updateAd(Integer id, CreateOrUpdateAdDto createOrUpdateAdDto) {
         Ad adEntity = adRepository.findById(id).get();
@@ -89,11 +104,25 @@ public class AdServiceImpl implements AdService {
         return adMapper.updateAdToDto(adEntity);
     }
 
+    /**
+     * Метод получает все объявления текущего пользователя
+     *
+     * @return возвращает DTO - список моделей объявления пользователя
+     */
     @Override
     public AdsDto getAdsDtoMy(Authentication authentication) {
+//        User user = userRepository.findByUsername(authentication.getName()).get();
+//        List<AdDto> collect = user.getAdEntityList().stream().map(adMapper::adToAdDto).collect(Collectors.toList());
+//        return new AdsDto(collect.size(),collect);
         return null;
     }
 
+    /**
+     * Метод удаляет объявление по id
+     *
+     * @param id - id объявления
+     * @return boolean
+     */
     @Override
     public void deleteAd(Integer id) {
         adRepository.deleteById(id);
@@ -114,6 +143,12 @@ public class AdServiceImpl implements AdService {
         adRepository.save(ad);
     }
 
+    /**
+     * Метод получает информацию об объявлении по id
+     *
+     * @param id - id объявления
+     * @return возвращает DTO модель объявления
+     */
     @Override
     public ExtendedAdDto getAdById(Integer id) {
         return adRepository.findById(id).map(adMapper::adToExtendedAdDto).orElse(null);

@@ -6,6 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.authentication.RegisterDto;
+import ru.skypro.homework.exception.WrongPasswordException;
 import ru.skypro.homework.service.AuthService;
 
 @Service
@@ -26,6 +27,9 @@ public class AuthServiceImpl implements AuthService {
             return false;
         }
         UserDetails userDetails = manager.loadUserByUsername(userName);
+        if (!encoder.matches(password, userDetails.getPassword())) {
+            throw new WrongPasswordException("Неверный пароль");
+        }
         return encoder.matches(password, userDetails.getPassword());
     }
 

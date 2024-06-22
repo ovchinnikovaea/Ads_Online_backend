@@ -12,6 +12,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class CreateOrUpdateCommentDto {
     @JsonProperty("text")
-    @Size(min = 8, max = 64)
+    @Size(min = 8, max = 64) // текст комментария
     private String text;
 }

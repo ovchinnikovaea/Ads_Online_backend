@@ -38,6 +38,13 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
         return userMapper.userToUserDto(getUser(userName));
     }
 
+    /**
+     * Метод возвращает информацию о текущем, авторизованном пользователе.
+     * Метод, используя объект {@link Authentication#getName()} как параметр userName,
+     * находит в БД {@link UserRepository}, пользователя с соответствующими данными и возвращает его.
+     * @param username
+     * @return объект userEntity
+     */
     @Override
     public User getUser(String username) throws UserNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
@@ -65,6 +72,18 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
         return userRepository.findById(id).map(User::getImage).map(Image::getData).orElse(null);
     }
 
+    /**
+     * Метод изменяет данные пользователя, а именно имя, фамилию и номер телефона.
+     * <p>В начале метод получает из {@link Authentication} логин авторизованного пользователя
+     * и записывает его в переменную.</p>
+     * <p>По логину находит данные пользователя в БД и кладет их в сущность user.
+     * Сущность user заполняется измененными данными из парамера updateUser.</p>
+     * <p>В итоге измененный объект user сохраняется в БД, и он же возвращается из метода.</p>
+     *
+     * @param body     объект содержащий поля с именем, фамилией и номером телефона.
+     * @param authentication
+     * @return объект user
+     */
     @Override
     public UpdateUserDto updateUser(UpdateUserDto body, Authentication authentication) throws UserNotFoundException {
         User user = getUser(authentication.getName());
@@ -76,6 +95,15 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
         return userMapper.updateUserToUserDto(userRepository.save(user));
     }
 
+    /**
+     * Метод обновляет пароль текущего, авторизованного пользователя.
+     * <p>Метод получает объект body, который содержит два поля со старым и новым паролями.
+     * А так же объект {@link Authentication} из которого можно получить логин
+     * авторизованного пользователя.</p>
+     *
+     * @param body           объект {@link NewPasswordDto}, содержащий старый и новый пароли.
+     * @param authentication содержит логин авторизованного пользователя.
+     */
     @Override
     public void updateNewPassword(NewPasswordDto body, Authentication authentication) throws UserNotFoundException {
         User user = getUser(authentication.getName());

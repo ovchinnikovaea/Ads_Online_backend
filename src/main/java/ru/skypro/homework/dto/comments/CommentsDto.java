@@ -10,11 +10,11 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentsDto {
     // Dto для списка комментариев
-    // где results - коллекция комментариев в формате AdDto
 
-    @JsonProperty("count")
+    @JsonProperty("count") // счетчик комментариев
     private Integer count;
-    @JsonProperty("results")
+
+    @JsonProperty("results") // коллекция комментариев в формате AdDto
     @Valid
     private List<CommentDto> results;
 

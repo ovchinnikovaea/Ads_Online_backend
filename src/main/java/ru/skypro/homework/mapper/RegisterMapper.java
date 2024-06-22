@@ -12,8 +12,6 @@ import ru.skypro.homework.entity.User;
 @Component
 @Mapper(componentModel = "spring")
 public abstract class RegisterMapper {
-    public abstract RegisterDto toDto(User user);
-    public abstract RegisterDto createRegisterDtoToUser(RegisterDto registerDto);
     public abstract RegisterDto userToUserDto(User user);
 
     @Mapping(target = "email", source = "username")

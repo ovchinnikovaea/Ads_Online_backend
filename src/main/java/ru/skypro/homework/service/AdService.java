@@ -17,6 +17,7 @@ public interface AdService {
     CreateOrUpdateAdDto createAd(Authentication authentication, CreateOrUpdateAdDto createAd, MultipartFile file) throws IOException;
 //    ResponseEntity<ExtendedAdDto> getExtendedAdDto(Integer id);
     CreateOrUpdateAdDto updateAd(Integer id, CreateOrUpdateAdDto createOrUpdateAdDto);
+
     AdsDto getAdsDtoMy(Authentication authentication);
     void deleteAd(Integer idPk);
     ExtendedAdDto getAdById(Integer id);

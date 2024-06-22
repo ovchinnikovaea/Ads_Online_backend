@@ -17,26 +17,26 @@ import java.util.List;
 public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id") // Id
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "author_id")
-    private User author; // множество объявлений - один автор
+    @JoinColumn(name = "author_id") // множество объявлений - один автор
+    private User author;
 
-    @Column(name = "price")
+    @Column(name = "price") // цена
     private BigDecimal price;
 
-    @Column(name = "title")
+    @Column(name = "title") // заголовок
     private String title;
 
     @OneToOne
-    @JoinColumn(name = "image_id")
-    private Image images; // одно объявления - множество изображений
+    @JoinColumn(name = "image_id") // одно объявления - множество изображений
+    private Image images;
 
-    @Column(name = "description")
+    @Column(name = "description") // описание
     private String description;
 
-    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL)
-    private List<Comment> comments; // одно объявление - множество комментариев
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL) // одно объявление - множество комментариев
+    private List<Comment> comments;
 }

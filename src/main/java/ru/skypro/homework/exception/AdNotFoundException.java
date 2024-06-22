@@ -12,16 +12,4 @@ public class AdNotFoundException extends RuntimeException {
     public AdNotFoundException(String message) {
         super(message);
     }
-
-    public AdNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public AdNotFoundException(Throwable cause) {
-        super(cause);
-    }
-
-    protected AdNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

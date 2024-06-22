@@ -39,6 +39,12 @@ public class CommentServiceImpl implements CommentService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Метод получает список всех комментариев объявления
+     *
+     * @param id - id объявления
+     * @return возвращает DTO - список моделей комментариев
+     */
     @Override
     public CommentsDto getAllCommentsByAd(Integer id) {
 //        List<Comment> comments = commentRepository.findByAdId(id);
@@ -48,6 +54,13 @@ public class CommentServiceImpl implements CommentService {
         return new CommentsDto(collect.size(), collect);
     }
 
+    /**
+     * Метод добавляет комментарий к объявлению
+     *
+     * @param adId                  - id объявления
+     * @param commentDTO            - DTO модель класса {@link CreateOrUpdateCommentDto
+     * @return DTO модель комментария
+     */
     @Override
     public CommentDto addCommentToAd(Integer adId, CreateOrUpdateCommentDto commentDTO, Authentication authentication) {
         String currentUsername = authentication.getName();
@@ -62,6 +75,12 @@ public class CommentServiceImpl implements CommentService {
         return commentMapper.commentToCommentDTO(commentRepository.save(comment));
     }
 
+    /**
+     * Метод удаляет комментарий
+     *
+     * @param commentId - id комментария
+     * @return строку с результатом выполнения метода
+     */
     @Override
     @Transactional
     public void deleteComment(Integer adId, Integer commentId) {

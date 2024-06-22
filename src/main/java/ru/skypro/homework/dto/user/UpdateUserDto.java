@@ -5,10 +5,12 @@ import lombok.Data;
 
 @Data
 public class UpdateUserDto {
-    @JsonProperty("firstName")
+    @JsonProperty("firstName") // имя
     private String firstName;
-    @JsonProperty("lastName")
+
+    @JsonProperty("lastName") // фамилия
     private String lastName;
-    @JsonProperty("phone")
+
+    @JsonProperty("phone") // номер телефона
     private String phone;
 }

@@ -18,8 +18,13 @@ import javax.persistence.*;
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id") // Id
     private Long id;
+
+    @Column(name = "username") // логин
     private String username;
+
+    @Column(name = "authority")
     private String authority;
 
 }

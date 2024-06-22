@@ -10,19 +10,21 @@ import java.util.Objects;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id") // Id
     private Integer id;
 
-    @Column(name = "size")
+    @Column(name = "size") // размер файла
     private Long fileSize;
 
-    @Column(name = "file_path")
+    @Column(name = "file_path") // путь к файлу
     private String filePath;
 
-    @Column(name = "media_type")
+    @Column(name = "media_type") // тип медиа файла
     private String mediaType;
 
     @Lob

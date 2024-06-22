@@ -9,8 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewPasswordDto {
-    @JsonProperty("currentPassword")
+
+    @JsonProperty("currentPassword") // текущий пароль
     private String currentPassword;
-    @JsonProperty("newPassword")
+
+    @JsonProperty("newPassword") // новый пароль
     private String newPassword;
 }

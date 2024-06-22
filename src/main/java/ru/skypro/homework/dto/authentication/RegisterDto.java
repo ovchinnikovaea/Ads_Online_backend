@@ -14,22 +14,22 @@ import ru.skypro.homework.entity.Role;
 public class RegisterDto {
     // Dto для регистрации пользователя
 
-    @JsonProperty("username")
+    @JsonProperty("username") // имя пользователя
     private String username;
 
-    @JsonProperty("password")
+    @JsonProperty("password") // пароль
     private String password;
 
-    @JsonProperty("firstName")
+    @JsonProperty("firstName") // имя
     private String firstName;
 
-    @JsonProperty("lastName")
+    @JsonProperty("lastName") // фамилия
     private String lastName;
 
-    @JsonProperty("phone")
+    @JsonProperty("phone") // номер телефона
     private String phone;
 
-    @JsonProperty("role")
+    @JsonProperty("role") // привилегии (ADMIN, USER)
     private Role role;
 
 }

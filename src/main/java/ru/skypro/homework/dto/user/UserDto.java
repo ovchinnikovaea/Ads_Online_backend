@@ -9,20 +9,26 @@ import javax.persistence.Enumerated;
 
 @Data
 public class UserDto {
-    @JsonProperty("id")
+    @JsonProperty("id") // Id
     private Integer id;
-    @JsonProperty("email")
+
+    @JsonProperty("email") // Адрес эл.почты
     private String email;
-    @JsonProperty("firstName")
+
+    @JsonProperty("firstName") // имя
     private String firstName;
-    @JsonProperty("lastName")
+
+    @JsonProperty("lastName") // фамилия
     private String lastName;
-    @JsonProperty("phone")
+
+    @JsonProperty("phone") // номер телефона
     private String phone;
-    @JsonProperty("role")
+
+    @JsonProperty("role") // привилегии (ADMIN, USER)
     @Enumerated(EnumType.STRING)
     private Role role;
-    @JsonProperty("image")
+
+    @JsonProperty("image") // изображение
     private String image;
 
 }
