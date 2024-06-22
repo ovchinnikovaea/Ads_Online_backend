@@ -20,7 +20,11 @@ import ru.skypro.homework.service.CommentService;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -56,7 +60,10 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
         comment.setAd(ad);
         comment.setAuthor(user);
-        comment.setText(comment.getText());
+        comment.setText(commentDTO.getText());
+
+        comment.setCreatedAt(commentMapper.mapToEpochMillis(LocalDateTime.now()));
+
         return commentMapper.commentToCommentDTO(commentRepository.save(comment));
     }
 
@@ -70,8 +77,8 @@ public class CommentServiceImpl implements CommentService {
     public CommentDto updateComment(Integer adId, Integer commentId, CreateOrUpdateCommentDto commentDTO) {
         Comment updateComment = commentRepository.findByAdIdAndId(adId, commentId);
         Comment comment = commentMapper.createOrUpdateCommentDTOToComment(commentDTO);
-        updateComment.setText(comment.getText());
-        updateComment.setCreatedAt((int) (Instant.now().toEpochMilli() / 1000L));
+        updateComment.setText(commentDTO.getText());
+//        updateComment.setCreatedAt((int) (Instant.now().toEpochMilli() / 1000L));
         return commentMapper.commentToCommentDTO(commentRepository.save(updateComment));
     }
 }

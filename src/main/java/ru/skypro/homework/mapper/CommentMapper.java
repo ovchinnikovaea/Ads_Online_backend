@@ -9,6 +9,8 @@ import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Comment;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Component
@@ -44,8 +46,13 @@ public interface CommentMapper {
     CreateOrUpdateCommentDto commentToCreateOrUpdateCommentDTO(Comment comment);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createdAt", expression = "java((int) (System.currentTimeMillis() / 1000))")
+    @Mapping(target = "createdAt", expression = "java(mapToEpochMillis(java.time.LocalDateTime.now()))")
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "ad", ignore = true)
     Comment createOrUpdateCommentDTOToComment(CreateOrUpdateCommentDto createOrUpdateCommentDTO);
+
+    default Long mapToEpochMillis(LocalDateTime dateTime) {
+        LocalDateTime adjustedDateTime = dateTime.minusHours(3);
+        return adjustedDateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+    }
 }
