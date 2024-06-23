@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.TimeZone;
 
 @Service
+@Transactional
+
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
