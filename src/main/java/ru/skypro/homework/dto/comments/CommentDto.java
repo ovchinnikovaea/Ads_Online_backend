@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class CommentDTO {
+public class CommentDto {
+    // Dto для описания комментария к объявлению
     @JsonProperty("author")
     private Integer author;
     @JsonProperty("authorImage")
@@ -12,7 +13,7 @@ public class CommentDTO {
     @JsonProperty("authorFirstName")
     private String authorFirstName;
     @JsonProperty("createdAt")
-    private Integer createdAt;
+    private Long createdAt;
     @JsonProperty("pk")
     private Integer pk;
     @JsonProperty("text")

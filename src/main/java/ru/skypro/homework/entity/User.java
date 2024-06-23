@@ -1,13 +1,18 @@
 package ru.skypro.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
-import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.config.WebSecurityConfig;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Size;
+import java.util.Objects;
+
 @Slf4j
 @Entity
-@Table(name="users")
+@Table(name = "users")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -15,35 +20,43 @@ import javax.persistence.*;
 @ToString(includeFieldNames=true)
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @JsonProperty("email")
+    @Email
     private String email;
+    @JsonProperty("firstName")
+    @Size(min = 2, max = 16)
     private String firstName;
+    @Size(min = 2, max = 16)
+    @JsonProperty("lastName")
     private String lastName;
+    @JsonProperty("phone")
     private String phone;
-    @ManyToOne
-    private Role role;
+//    @ManyToOne
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("role")
+    private Role role ; // множество пользователей - одна роль
+    @JsonProperty("username")
+    @Size(min = 4, max = 32)
+    private String username;
+    @JsonProperty("password")
+    @Size(min = 8, max = 16)
+    private String password;
     private boolean enabled;
     @OneToOne
-    private Image image;
+    private Image image; // один пользователь - одно изображение
 
-
-
-    public User(@NonNull Integer id,@NonNull String email,@NonNull String firstName,
-                @NonNull String lastName,@NonNull String phone,@NonNull Role role,@NonNull Image image) {
-        this.id = id;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.role = role;
-        this.image = image;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(phone, user.phone) && Objects.equals(username, user.username);
     }
 
-    public User(@NonNull String firstName,@NonNull String lastName,@NonNull String phone) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
+    @Override
+    public int hashCode() {
+        return Objects.hash(phone, username);
     }
-
-
 }

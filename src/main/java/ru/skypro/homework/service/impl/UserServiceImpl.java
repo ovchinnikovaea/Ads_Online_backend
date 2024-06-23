@@ -6,64 +6,75 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Role;
-import ru.skypro.homework.dto.User.NewPasswordDTO;
-import ru.skypro.homework.dto.User.UpdateUserDTO;
-import ru.skypro.homework.dto.User.UserDTO;
+import ru.skypro.homework.dto.authentication.RegisterDto;
+import ru.skypro.homework.dto.user.NewPasswordDto;
+import ru.skypro.homework.dto.user.UpdateUserDto;
+import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.SuchAUserAlreadyExists;
 import ru.skypro.homework.exception.UserNotFoundException;
+import ru.skypro.homework.mapper.RegisterMapper;
 import ru.skypro.homework.mapper.UserMapper;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
+
+import javax.transaction.Transactional;
 
 @Slf4j
 @Service
-public class UserServiceImpl extends UserNotFoundException implements UserService {
-    private final AuthServiceImpl authoritiesService;
+@RequiredArgsConstructor
+@Transactional
+public class UserServiceImpl implements UserService {
+    private final AuthorityServiceImpl authorityService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ImageService imageService;
     private final PasswordEncoder encoder;
-
-    public UserServiceImpl(AuthServiceImpl authoritiesService, UserRepository userRepository,
-                           UserMapper userMapper, PasswordEncoder encoder) {
-        this.authoritiesService = authoritiesService;
-        this.userRepository = userRepository;
-        this.userMapper = userMapper;
-        this.encoder = encoder;
-    }
+    private final RegisterMapper registerMapper;
 
     @Override
-    public UserDTO getUserDto(String userName) {
+    public UserDto getUserDto(String userName) {
         return userMapper.userToUserDto(getUser(userName));
     }
 
     @Override
     public User getUser(String username) throws UserNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found with id: "));
     }
 
     @Override
-    public void registerUser(User user, Role role) {
+    public RegisterDto registerUser(RegisterDto body) throws SuchAUserAlreadyExists {
+        User user = new User();
+        user.setUsername(body.getUsername());
+        user.setPassword(encoder.encode(body.getPassword()));
+        user.setFirstName(body.getFirstName());
+        user.setLastName(body.getLastName());
+        user.setPhone(body.getPhone());
+        user.setRole(body.getRole());
         user.setEnabled(true);
-        authoritiesService.addAuthorities(user, role);
-        userRepository.save(user);
-    }
-
-    @Override
-    public byte[] getUserImage(int id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-
-        if (user.getImage() == null) {
-            throw new ImageNotFoundException();
+        if(userRepository.findAll().contains(user)) {
+            throw new SuchAUserAlreadyExists();
         }
-
-        return imageService.getImageData(user.getImage().getId());
+        userRepository.save(user);
+        authorityService.addAuthorities(user);
+        return registerMapper.userToUserDto(user);
     }
 
+//    @Override
+//    public byte[] getUserImage(int id) throws UserNotFoundException {
+//        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: "));
+//
+//        if (user.getImage() == null) {
+//            throw new ImageNotFoundException("Image not found with id:");
+//        }
+//
+//        return imageService.getImageData(user.getImage().getId());
+//    }
+
     @Override
-    public UpdateUserDTO updateUser(UpdateUserDTO body, Authentication authentication) throws UserNotFoundException {
+    public UpdateUserDto updateUser(UpdateUserDto body, Authentication authentication) throws UserNotFoundException {
         User user = getUser(authentication.getName());
         User infoToUpdate = userMapper.updateUserDtoToUser(body);
 
@@ -74,7 +85,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
     }
 
     @Override
-    public void updateNewPassword(NewPasswordDTO body, Authentication authentication) throws UserNotFoundException {
+    public void updateNewPassword(NewPasswordDto body, Authentication authentication) throws UserNotFoundException {
         User user = getUser(authentication.getName());
         User infoToUpdate = userMapper.updateNewPasswordDtoToUser(body);
 

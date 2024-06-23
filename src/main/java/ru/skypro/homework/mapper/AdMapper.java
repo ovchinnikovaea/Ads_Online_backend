@@ -9,6 +9,7 @@ import ru.skypro.homework.dto.ads.AdsDto;
 import ru.skypro.homework.dto.ads.CreateOrUpdateAdDto;
 import ru.skypro.homework.dto.ads.ExtendedAdDto;
 import ru.skypro.homework.entity.Ad;
+import ru.skypro.homework.service.impl.ImageServiceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +17,17 @@ import java.util.List;
 @Component
 @Mapper(componentModel = "spring")
 public abstract class AdMapper {
-
+    @Autowired
+    ImageServiceImpl imageService;
     public abstract Ad createAdsDtoToAds(CreateOrUpdateAdDto createOrUpdateAdDto);
 
     @Mapping(target = "author", expression = "java(ad.getAuthor().getId())")
-    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
+    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(ad.getImage().getId()))")
     @Mapping(target = "pk", source = "id")
     public abstract AdDto adToAdDto(Ad ad);
 
     @Mapping(target = "pk", source = "id")
-    @Mapping(target = "image", expression = "java(imageService.getAdImageUrl(ad.getId()))")
+    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(ad.getImage().getId()))")
     @Mapping(target = "email", expression = "java(ad.getAuthor().getUsername())")
     @Mapping(target = "authorFirstName", expression = "java(ad.getAuthor().getFirstName())")
     @Mapping(target = "authorLastName", expression = "java(ad.getAuthor().getLastName())")
