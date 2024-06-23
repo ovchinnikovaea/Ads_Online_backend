@@ -24,7 +24,7 @@ public class UserSecurity {
         try {
             User adAuthor = adRepository.findById(adsId).orElseThrow(AdNotFoundException::new).getAuthor();
             User authentificatedUser = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                    .orElseThrow(UserNotFoundException::new);
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: "));
 
             return adAuthor.equals(authentificatedUser);
         } catch (AdNotFoundException | UserNotFoundException e) {
@@ -36,7 +36,7 @@ public class UserSecurity {
         try {
             User commentAuthor = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new).getAuthor();
             User authentificatedUser = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                    .orElseThrow(UserNotFoundException::new);
+                    .orElseThrow(() -> new UserNotFoundException("User not found with id: "));
 
             return commentAuthor.equals(authentificatedUser);
         } catch (AdNotFoundException | UserNotFoundException e) {

@@ -12,11 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import ru.skypro.homework.security.MyUserDetailsService;
 
+import javax.transaction.Transactional;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Transactional
 public class WebSecurityConfig {
 
     // Подключение DataSource для обеспечения соединения с БД

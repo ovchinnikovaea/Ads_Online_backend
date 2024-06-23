@@ -1,5 +1,6 @@
 package ru.skypro.homework.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -45,13 +46,13 @@ public class AdsController {
             @ApiResponse(responseCode = "201", description = "Created"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    @PostMapping
-    public ResponseEntity<AdDto> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
-                                       @Valid @RequestPart(value = "image", required = false) MultipartFile image,
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> addAd(@RequestPart(value = "properties", required = false) CreateOrUpdateAdDto properties,
+                                       @RequestPart(value = "image", required = false) MultipartFile image,
                                        Authentication authentication) {
-        return new ResponseEntity<>(adService.createAd(properties, image, authentication), HttpStatus.CREATED);
+        adService.createAd(properties, image, authentication);
+        return ResponseEntity.ok().build();
     }
-
 
     @Operation(summary = "Получение информации об объявлении")
     @ApiResponses(value = {
@@ -110,9 +111,10 @@ public class AdsController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @PatchMapping(value = "/{id}/image")
-    public ResponseEntity<byte[]> updateImage(@PathVariable("id") Integer id,
+    @PatchMapping(value = "/{id}/image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateImage(@PathVariable("id") Integer id,
                                               @Valid @RequestPart(value = "image", required = false) MultipartFile image) {
-        return ResponseEntity.ok(adService.updateImage(id, image));
-    }
+        adService.updateImage(id, image);
+        return ResponseEntity.ok().build();    }
+
 }

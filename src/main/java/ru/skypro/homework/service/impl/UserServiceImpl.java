@@ -2,11 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.control.MappingControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,10 +10,8 @@ import ru.skypro.homework.dto.authentication.RegisterDto;
 import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
-import ru.skypro.homework.entity.Ad;
 import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
-import ru.skypro.homework.exception.ImageNotFoundException;
 import ru.skypro.homework.exception.SuchAUserAlreadyExists;
 import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.RegisterMapper;
@@ -26,10 +20,13 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
+import javax.transaction.Transactional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl extends UserNotFoundException implements UserService {
+@Transactional
+public class UserServiceImpl implements UserService {
     private final AuthorityServiceImpl authorityService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
@@ -44,7 +41,7 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
 
     @Override
     public User getUser(String username) throws UserNotFoundException {
-        return userRepository.findByUsername(username).orElseThrow(UserNotFoundException::new);
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found with id: "));
     }
 
     @Override
@@ -65,16 +62,16 @@ public class UserServiceImpl extends UserNotFoundException implements UserServic
         return registerMapper.userToUserDto(user);
     }
 
-    @Override
-    public byte[] getUserImage(int id) throws UserNotFoundException {
-        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-
-        if (user.getImage() == null) {
-            throw new ImageNotFoundException();
-        }
-
-        return imageService.getImageData(user.getImage().getId());
-    }
+//    @Override
+//    public byte[] getUserImage(int id) throws UserNotFoundException {
+//        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found with id: "));
+//
+//        if (user.getImage() == null) {
+//            throw new ImageNotFoundException("Image not found with id:");
+//        }
+//
+//        return imageService.getImageData(user.getImage().getId());
+//    }
 
     @Override
     public UpdateUserDto updateUser(UpdateUserDto body, Authentication authentication) throws UserNotFoundException {

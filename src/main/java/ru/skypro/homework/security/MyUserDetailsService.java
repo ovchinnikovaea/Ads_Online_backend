@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class MyUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 

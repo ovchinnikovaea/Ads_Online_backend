@@ -8,6 +8,7 @@ import ru.skypro.homework.dto.user.NewPasswordDto;
 import ru.skypro.homework.dto.user.UpdateUserDto;
 import ru.skypro.homework.dto.user.UserDto;
 import ru.skypro.homework.entity.User;
+import ru.skypro.homework.exception.SuchAUserAlreadyExists;
 import ru.skypro.homework.exception.UserNotFoundException;
 
 public interface UserService {
@@ -15,13 +16,11 @@ public interface UserService {
 
     User getUser(String username) throws UserNotFoundException;
 
-    RegisterDto registerUser(RegisterDto body);
-
-    byte[] getUserImage(int id) throws UserNotFoundException;
+    RegisterDto registerUser(RegisterDto body) throws SuchAUserAlreadyExists;
 
     UpdateUserDto updateUser(UpdateUserDto body, Authentication authentication) throws UserNotFoundException;
 
     void updateNewPassword(NewPasswordDto body, Authentication authentication) throws UserNotFoundException;
 
-    void uploadImage(MultipartFile image, Authentication authentication) throws UserNotFoundException;
+    void uploadImage(MultipartFile imageMultipart, Authentication authentication) throws UserNotFoundException;
 }

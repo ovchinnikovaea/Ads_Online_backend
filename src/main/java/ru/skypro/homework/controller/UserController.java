@@ -59,11 +59,9 @@ public class UserController {
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
 
-    @PatchMapping(value = "/me/image")
-    public ResponseEntity<Void> updateUserImage(@Valid @RequestPart(value = "image", required = false) MultipartFile image, Authentication authentication) {
+    @PatchMapping(value = "/me/image", consumes = "multipart/form-data")
+    public ResponseEntity<Void> updateUserImage(@RequestPart(value = "image", required = false) MultipartFile image, Authentication authentication) {
         userService.uploadImage(image, authentication);
         return ResponseEntity.ok().build();
     }
-
-
 }

@@ -3,11 +3,13 @@ package ru.skypro.homework.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.comments.CommentDto;
 import ru.skypro.homework.dto.comments.CommentsDto;
 import ru.skypro.homework.dto.comments.CreateOrUpdateCommentDto;
 import ru.skypro.homework.entity.Comment;
+import ru.skypro.homework.service.ImageService;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -15,43 +17,44 @@ import java.util.List;
 
 @Component
 @Mapper(componentModel = "spring")
-public interface CommentMapper {
-    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
-
+public abstract class CommentMapper {
+    @Autowired
+    ImageService imageService;
     @Mapping(source = "id", target = "pk")
     @Mapping(source = "author.id", target = "author")
-    @Mapping(source = "author.image.filePath", target = "authorImage")
+    @Mapping(target = "authorImage", expression = "java(comment.getAuthor() != null && comment.getAuthor().getImage() != null ? imageService.getUserImageUrl(comment.getAuthor().getImage().getId()) : null)")
     @Mapping(source = "author.firstName", target = "authorFirstName")
-    CommentDto commentToCommentDTO(Comment comment);
+    public abstract CommentDto commentToCommentDTO(Comment comment);
+
 
     @Mapping(source = "author", target = "author.id")
     @Mapping(source = "pk", target = "id")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "ad", ignore = true)
-    Comment commentDTOToComment(CommentDto commentDTO);
+    public abstract Comment commentDTOToComment(CommentDto commentDTO);
 
-    List<CommentDto> commentsToCommentDTOs(List<Comment> comments);
+    public abstract List<CommentDto> commentsToCommentDTOs(List<Comment> comments);
 
-    List<Comment> commentDTOsToComments(List<CommentDto> commentDtos);
+    public abstract List<Comment> commentDTOsToComments(List<CommentDto> commentDtos);
 
     @Mapping(target = "results", source = "comments")
     @Mapping(expression = "java(comments.size())", target = "count")
-    default CommentsDto commentsToCommentsDTO(List<Comment> comments) {
+    public  CommentsDto commentsToCommentsDTO(List<Comment> comments) {
         CommentsDto commentsDTO = new CommentsDto();
         commentsDTO.setResults(commentsToCommentDTOs(comments));
         commentsDTO.setCount(comments.size());
         return commentsDTO;
     }
 
-    CreateOrUpdateCommentDto commentToCreateOrUpdateCommentDTO(Comment comment);
+    public abstract CreateOrUpdateCommentDto commentToCreateOrUpdateCommentDTO(Comment comment);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", expression = "java(mapToEpochMillis(java.time.LocalDateTime.now()))")
     @Mapping(target = "author", ignore = true)
     @Mapping(target = "ad", ignore = true)
-    Comment createOrUpdateCommentDTOToComment(CreateOrUpdateCommentDto createOrUpdateCommentDTO);
+    public abstract Comment createOrUpdateCommentDTOToComment(CreateOrUpdateCommentDto createOrUpdateCommentDTO);
 
-    default Long mapToEpochMillis(LocalDateTime dateTime) {
+    public Long mapToEpochMillis(LocalDateTime dateTime) {
         LocalDateTime adjustedDateTime = dateTime.minusHours(3);
         return adjustedDateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
     }

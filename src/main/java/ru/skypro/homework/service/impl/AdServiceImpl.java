@@ -16,6 +16,7 @@ import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.entity.User;
 import ru.skypro.homework.exception.AdNotFoundException;
 import ru.skypro.homework.exception.ImageNotFoundException;
+import ru.skypro.homework.exception.UserNotFoundException;
 import ru.skypro.homework.mapper.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final UserService userService;
@@ -40,16 +42,16 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    @Transactional
-    public AdDto createAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
+    public void createAd(CreateOrUpdateAdDto createOrUpdateAdDto, MultipartFile image, Authentication authentication) {
         User user = userService.getUser(authentication.getName());
-        Ad ads = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
-        ads.setAuthor(user);
-        Ad savedAds = adRepository.save(ads);
-        Image adsImage = imageService.addImage(image);
-        savedAds.setImage(adsImage);
-
-        return adMapper.adToAdDto(savedAds);
+        Ad ad = adMapper.createAdsDtoToAds(createOrUpdateAdDto);
+        ad.setAuthor(user);
+        Ad savedAd = adRepository.save(ad);
+        if (image != null && !image.isEmpty()) {
+            Image adsImage = imageService.addImage(image);
+            ad.setImage(adsImage);
+            adRepository.save(ad);
+        }
     }
 
     @Override
@@ -81,23 +83,11 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public byte[] updateImage(int id, MultipartFile image) {
+    public void updateImage(int id, MultipartFile imageMultipart) {
         Ad ad = getAdById(id);
-        ad.setImage(imageService.addImage(image));
+        Image image = imageService.addImage(imageMultipart);
+        ad.setImage(image);
         adRepository.save(ad);
-
-        return getAdImage(id);
-    }
-
-    @Override
-    public byte[] getAdImage(int id) {
-        Ad ad = adRepository.findById(id).orElseThrow(AdNotFoundException::new);
-
-        if (ad.getImage() == null) {
-            throw new ImageNotFoundException();
-        }
-
-        return imageService.getImageData(ad.getImage().getId());
     }
 
     @Override

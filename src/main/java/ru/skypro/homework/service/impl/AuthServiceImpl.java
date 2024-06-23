@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import ru.skypro.homework.security.MyUserDetailsService;
 import ru.skypro.homework.service.AuthService;
 
+import javax.transaction.Transactional;
+
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -18,6 +20,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public boolean login(String username, String password) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         if (userDetails == null) {
@@ -26,19 +29,5 @@ public class AuthServiceImpl implements AuthService {
         return encoder.matches(password, userDetails.getPassword());
     }
 
-//    @Override
-//    public boolean register(RegisterDto registerDto) {
-////        if (manager.userExists(registerDto.getUsername())) {
-////            return false;
-////        }
-////        manager.createUser(
-////                User.builder()
-////                        .passwordEncoder(this.encoder::encode)
-////                        .password(registerDto.getPassword())
-////                        .username(registerDto.getUsername())
-////                        .roles(registerDto.getRole().name())
-////                        .build());
-//        return true;
-//    }
 
 }

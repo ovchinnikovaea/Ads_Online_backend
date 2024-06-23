@@ -17,9 +17,9 @@ public abstract class UserMapper {
     @Autowired
     ImageService imageService;
 
-    @Mapping(target = "image", expression = "java(imageService.getUserImageUrl(user.getId()))")
-    //@Mapping(target = "role", expression = "java(Role.valueOf(authorityService.getAuthorities(user)))", ignore = true)
+    @Mapping(target = "image", expression = "java(user.getImage() != null && user.getImage().getId() != null ? imageService.getUserImageUrl(user.getImage().getId().intValue()) : null)")
     public abstract UserDto userToUserDto(User user);
+
 
     public abstract User updateUserDtoToUser(UpdateUserDto updateUserDto);
 

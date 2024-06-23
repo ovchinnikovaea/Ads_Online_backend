@@ -8,8 +8,11 @@ import ru.skypro.homework.entity.User;
 import ru.skypro.homework.repository.AuthorityRepository;
 import ru.skypro.homework.service.AuthorityService;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthorityServiceImpl implements AuthorityService {
     private final AuthorityRepository authoritiesRepository;
 
